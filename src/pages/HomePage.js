@@ -127,10 +127,7 @@ const HomePage = () => {
     setOverlayPos(position);
     infoWindowRef.open(mapRef);
     let markers = cluster.getMarkers();
-    let idsInCluster = [];
-    for (let i = 0; i < markers.length; i++) {
-      idsInCluster.push(markers[i].id);
-    }
+    const  idsInCluster = markers.map(o => o.id);
 
     setClusterMarkersLoading(true);
     await axios
@@ -194,7 +191,7 @@ const HomePage = () => {
         searchParams
       )
       .then((resp) => {
-        // console.log(resp.data.length);
+        // console.log(`markers: ${resp.data.length}`);
         setMarkers(resp.data);
         if (markerClustererRef) {
           markerClustererRef.addMarkers(
@@ -372,11 +369,9 @@ const HomePage = () => {
       }
       {isLoaded ? (
         <GoogleMap
-          onLoad={(m) => {
-            setMapRef(m);
-          }}
-          id="google-maps"
-          onClick={(e) => {
+          onLoad = {(m) => { setMapRef(m); }}
+          id = "google-maps"
+          onClick = {(e) => {
             infoWindowRef.close();
             if (codeMode) {
               setCopiedToClipboard(false);
@@ -401,10 +396,8 @@ const HomePage = () => {
           }}
         >
           <StandaloneSearchBox
-            onLoad={(s) => {
-              setSearchBoxRef(s);
-            }}
-            onPlacesChanged={onPlacesChanged}
+            onLoad = {(s) => { setSearchBoxRef(s); }}
+            onPlacesChanged = {onPlacesChanged}
           >
             <div className="search-box">
               <input type="text" placeholder="Search a location" />
@@ -412,11 +405,9 @@ const HomePage = () => {
           </StandaloneSearchBox>
           <MarkerF position={codeModeMarker} visible={codeMode}></MarkerF>
           <MarkerF
-            position={userLocation}
-            icon={location}
-            options={{
-              scale: 0.5,
-            }}
+            position = {userLocation}
+            icon = {location}
+            options = {{ scale: 0.5 }}
           />
           {/* <MarkerF
             zIndex={10000}
@@ -432,17 +423,12 @@ const HomePage = () => {
             }}
           /> */}
           <MarkerClustererF
-            onLoad={(m) => {
-              setMarkerClustererRef(m);
-            }}
+            onLoad={(m) => { setMarkerClustererRef(m) }}
             averageCenter={true}
             zoomOnClick={false}
-            onClick={(cluster) => {
-              clusterClick(cluster);
-            }}
+            onClick={(cluster) => { clusterClick(cluster); }}
           >
-            {(clusterer) =>
-              markers.map((marker) => (
+            {(clusterer) => markers.map((marker) => (
                 <MarkerF
                   zIndex={10000}
                   key={marker.id}
@@ -452,9 +438,7 @@ const HomePage = () => {
                   options={marker}
                   visible={!codeMode}
                   clickable={true}
-                  onClick={(m) => {
-                    markerClick(m, marker.id);
-                  }}
+                  onClick={(m) => { markerClick(m, marker.id); }}
                 />
               ))
             }
