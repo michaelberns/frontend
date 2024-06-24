@@ -14,7 +14,6 @@ function App() {
       <BrowserRouter>
         <Suspense fallback={<LoadingPage></LoadingPage>}></Suspense>
         <Routes>
-          {/* <Route path="/fastcurate" element={<FastCuratePage />} /> */}
           <Route path="/" element={<HomePage />}>
             <Route path="p/:permlink" element={<HomePage />} />
             <Route path="t/:tag" element={<HomePage />} />

@@ -21,7 +21,6 @@ import FilterComponent from './../components/FilterComponent';
 import useOutsideClick from "../hooks/useOutsideClick";
 
 
-const proposal_id = 282
 const libraries = ["places"];
 
 const HomePage = () => {
@@ -352,7 +351,7 @@ const HomePage = () => {
           FAQ
         </p>
          */}
-        {/* <p><a href="https://peakd.com/proposals/282" target="_blank" rel="noreferrer">Vote proposal</a></p> */}
+        {/* <p><a href="https://peakd.com/proposals/313" target="_blank" rel="noreferrer">Vote proposal</a></p> */}
       </div>
       {
         <div ref={filterRef}>
