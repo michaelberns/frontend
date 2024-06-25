@@ -192,21 +192,6 @@ const HomePage = () => {
       .then((resp) => {
         // console.log(`markers: ${resp.data.length}`);
         setMarkers(resp.data);
-        if (markerClustererRef) {
-          markerClustererRef.addMarkers(
-            resp.data.map(
-              (marker) =>
-                new window.google.maps.Marker({
-                  position: {
-                    lat: marker.lattitude,
-                    lng: marker.longitude,
-                  },
-                  id: marker.id,
-                })
-            )
-          );
-          markerClustererRef.repaint();
-        }
       })
       .catch((err) => {
         setMarkersError(err);
