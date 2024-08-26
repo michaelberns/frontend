@@ -1,15 +1,3 @@
-# Custom Marker Clustering Example
-
-This example demonstrates how the [Supercluster](https://github.com/mapbox/supercluster)
-algorithm can be directly used with `@vis.gl/react-google-maps` to create
-
-## Google Maps API key
-
-This example does not come with an API key. Running the examples locally requires a valid API key for the Google Maps Platform.
-See [the official documentation][get-api-key] on how to create and configure your own key.
-
-The API key has to be provided via the environment variable `GOOGLE_MAPS_API_KEY`. This can be done by creating a
-file named `.env` in the example directory with the following content:
 
 ```shell title=".env"
 GOOGLE_MAPS_API_KEY="<YOUR API KEY HERE>"
@@ -28,9 +16,5 @@ npm install
 To start the example with the local library run
 
 ```shell
-npm run start-local
+npm start
 ```
-
-The regular `npm start` task is only used for the standalone versions of the example (CodeSandbox for example)
-
-[get-api-key]: https://developers.google.com/maps/documentation/javascript/get-api-key
