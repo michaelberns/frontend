@@ -1,0 +1,139 @@
+/* The side tab */
+.side-tab {
+  height: 100%; /* Full-height */
+  width: 0; /* Start with no width - hidden */
+  position: fixed; /* Fixed position */
+  top: 0;
+  right: 0; /* Slide in from the right */
+  background-color: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 60px; /* Place content 60px from the top */
+  transition: 0.5s; /* Animation */
+  color: rgb(0, 0, 0); /* Text color */
+  z-index: 1000; /* Ensure it's on top of other content */
+}
+
+/* Content inside the tab */
+.side-tab .content {
+  margin: 25px;
+}
+
+/* Close button */
+.close-btn {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  font-size: 36px;
+  text-decoration: none;
+  color: rgb(0, 0, 0);
+}
+
+/* Button to open the tab */
+button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1001; /* Ensure button is on top of other content */
+}
+
+/* When the tab is open */
+.side-tab.open {
+  width: 95%;
+}
+
+@media screen and (min-width: 600px) {
+  
+  .side-tab.open {
+    width: 500px;
+  }
+}
+
+
+.post-summary {
+  display: flex;
+  flex-direction: row;
+  column-gap: 20px;
+  margin-bottom: 10px;
+  min-height: 100px;
+  max-height: 200px;
+  max-width: 100%;
+
+  .image-link {
+      display: block;
+      width: 150px;
+      height: 150px;
+      min-width: 90px;
+      min-height: 90px;
+      background-color: rgb(242, 242, 242);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-decoration: none;
+      color: black;
+
+      img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+      }
+
+      p {
+          text-align: center;
+          font-size: 10px;
+          box-sizing: border-box;
+          padding: 5px;
+      }
+  }
+
+  .post-info {
+      overflow: hidden;
+      height: 150px;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+
+      .title {
+          font-weight: bold;
+          width: 100%;
+          overflow: hidden;
+          margin-bottom: 4px;
+
+          a {
+              overflow: hidden;
+              display: block;
+              width: 100%;
+              text-decoration: none;
+              color: rgb(0, 0, 0);
+              white-space: nowrap;
+              text-overflow: ellipsis;
+          }
+      }
+
+      .description {
+          overflow: hidden;
+
+          p {
+              overflow: hidden;
+              text-overflow: ellipsis;
+              display: -webkit-box;
+              -webkit-line-clamp: 3;
+              line-clamp: 3;
+              -webkit-box-orient: vertical;
+          }
+      }
+
+      .extra-info {
+          display: flex;
+          font-size: 12px;
+          flex: 1;
+          justify-content: space-between;
+          column-gap: 10px;
+
+          p {
+              /* font-weight: bold; */
+              align-self: flex-end;
+          }
+      }
+  }
+}
