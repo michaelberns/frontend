@@ -1,7 +1,7 @@
 import React, { Ref, useCallback, useEffect, useState, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import axios from 'axios'
-import { useParams } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom';
 
 import { APIProvider, InfoWindow, Map, useMap, AdvancedMarker, ControlPosition, MapControl } from '@vis.gl/react-google-maps';
 
@@ -22,6 +22,9 @@ import FilterComponent from './components/FilterComponent';
 import { PlacePicker} from '@googlemaps/extended-component-library/react';
 
 import { PlacePicker as TPlacePicker } from '@googlemaps/extended-component-library/place_picker.js';
+
+export let setGlobalLocation: (location: google.maps.places.Place | undefined) => void;
+export let setGlobalZoom: (zoom: number | undefined) => void;
 
 const API_KEY =
   globalThis.GOOGLE_MAPS_API_KEY ?? (process.env.GOOGLE_MAPS_API_KEY as string);
@@ -52,6 +55,8 @@ const App = () => {
     undefined
   );
 
+  setGlobalLocation = setLocation;
+
   //Loading State
   const [loading, setLoading] = useState(true);
 
@@ -59,6 +64,9 @@ const App = () => {
 
   const [performanceTest , setPerformanceTest] = useState(false);
   const [lowEndDevice , setLowEndDevice] = useState(false);
+
+  let usernameProvided = false;
+  var usernamep = '';
 
   if (!performanceTest){
     const start = performance.now();
@@ -76,7 +84,21 @@ const App = () => {
   //Variables for api markers
   var loadedonce = false;
   const [firstLoad , setFirstLoad] = useState(false);
+  
   const params = useParams();
+
+  function YourComponent() {
+    const { username } = useParams();       
+    
+    if (username.startsWith('@') && fetchingMarkers) {
+      usernameProvided = true;
+      usernamep = username.substring(1);
+    } else {
+      usernameProvided = false;
+    }
+    return null
+  }
+
   const [searchParams, setSearchParams] = useState(
     params?.username ? { author: params.username } : (params?.permlink ? { permlink: params.permlink } : (params?.tag ? { tags: [params?.tag] } : { curated_only: false }))
   );
@@ -93,9 +115,11 @@ const App = () => {
     setFetchingMarkers(true)
     const oneMonthAgo = getOneMonthAgo();
 
+    console.log(usernameProvided)
+
     newSearchParams({
       tags: filterData && filterData.tags && filterData.tags.length && filterData.tags[0] ? filterData.tags : [],
-      author: filterData ? filterData.username : '',
+      author: usernameProvided ? usernamep : filterData ? filterData.username : '',
       post_title: filterData ? filterData.postTitle : '',
       start_date: lowEndDevice ? oneMonthAgo : filterData ? filterData.startDate : '',
       end_date: filterData ? filterData.endDate : '',
@@ -135,7 +159,7 @@ const App = () => {
     try {
       // const response = await axios.post('https://worldmappin.com/api/marker/0/150000/', searchParams);
       // void convertDatafromApitoGeojson(response.data).then(data => setGeojson(data));   
-      handleFilter(searchParams)   
+      handleFilter(searchParams) 
     } catch (err) {
         console.error('Error fetching feature data:', err);
     } finally {
@@ -183,6 +207,7 @@ const App = () => {
   //const map = useMap();
   const mapRef = useRef(null);
   const [mylocationzoom, setMyLocationZoom] = useState<number | undefined>(undefined);
+  setGlobalZoom = setMyLocationZoom;
   const [displaymylocation, setDisplaymylocation] = useState(false);
 
   const [poss, setPoss] = useState({ lat: null, lng: null });
@@ -193,13 +218,23 @@ const App = () => {
       lat: pos.lat,
       lng: pos.lng,
     });
-    // Do something with the updated state, like logging it
+    
     console.log("Position set to:", poss);
   }
 
 
   return (
     <APIProvider apiKey={API_KEY} version={'beta'}>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={null}>
+            <Route path="p/:permlink" element={null} />
+            <Route path="t/:tag" element={null} />
+            <Route path="*" element={null} /> {/*TODO Add PAGE NOT FOUND*/}
+            </Route>
+            <Route path="/:username" element={<YourComponent />} />
+          </Routes>
+        </BrowserRouter>
 
       <div className="LocationPickerContainer">
         <PlacePicker
@@ -290,7 +325,7 @@ const App = () => {
           maxZoom={15}
           zoomControl={true}
           gestureHandling={'greedy'}
-          disableDefaultUI={true}          
+          disableDefaultUI={true}
         
           // mapTypeControl={true}
           // mapTypeControlOptions={{
@@ -306,7 +341,6 @@ const App = () => {
             latLngBounds: bounds,
             strictBounds: true,  // Enforces the restriction strictly
           }}
-
 
           center={location?.location}
           zoom={
