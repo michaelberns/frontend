@@ -1,4 +1,8 @@
 {
+  "name": "worldmappin-frontend",
+  "version": "0.1.0",
+  "private": true,
+
   "type": "module",
   "dependencies": {
     "@deck.gl/core": "^9.0.27",
@@ -19,6 +23,8 @@
   "scripts": {
     "start": "vite",
     "start-local": "vite --config ../vite.config.local.js",
-    "build": "vite build"
+    "build": "vite build",
+    "public": "vite build --outDir ./../public --emptyOutDir",
+    "staging": "vite build --outDir ./../staging --emptyOutDir"
   }
 }

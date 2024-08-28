@@ -26,8 +26,7 @@ import { PlacePicker as TPlacePicker } from '@googlemaps/extended-component-libr
 export let setGlobalLocation: (location: google.maps.places.Place | undefined) => void;
 export let setGlobalZoom: (zoom: number | undefined) => void;
 
-const API_KEY =
-  globalThis.GOOGLE_MAPS_API_KEY ?? (process.env.GOOGLE_MAPS_API_KEY as string);
+const API_KEY = (process.env.GOOGLE_MAPS_API_KEY as string) ?? globalThis.GOOGLE_MAPS_API_KEY;
 
 const App = () => {
   const [geojson, setGeojson] = useState(null);
