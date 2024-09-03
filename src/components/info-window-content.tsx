@@ -1,21 +1,32 @@
 import React, { useState, useEffect, memo } from 'react';
 import axios from 'axios';
+import img_logo from '../assets/no-image-found.png';
 
 // PostSummary Component
 const PostSummary = (props) => {
   const marker = props.marker;
+  const [isImageError, setIsImageError] = useState(false);
+
+  const handleImageError = () => {
+    setIsImageError(true);
+  };
 
   return (
     <div className={"post-summary"}>
       <a href={marker.postLink} target="blank" className="image-link">
-        {marker.postImageLink !== "No image" ? (
+        {!isImageError && marker.postImageLink !== "No image" ? (
           <img
             src={"https://images.ecency.com/256x512/" + marker.postImageLink}
             alt=""
             loading="lazy"
+            onError={handleImageError}
           />
         ) : (
-          <p>No image found</p>
+          <img
+            src={img_logo}
+            alt="Default Logo"
+            loading="lazy"
+          />
         )}
       </a>
       <div className="post-info">
@@ -52,6 +63,7 @@ export const InfoWindowContent = memo(({ features }) => {
           marker_ids: featureIds,
         });
         setSelectedFeatures(response.data); // Assume response.data is an array of markers
+        // console.log(response.data)
       } catch (err) {
         setError(err.message);
         console.error('Error fetching feature data:', err);
@@ -63,9 +75,13 @@ export const InfoWindowContent = memo(({ features }) => {
 
   useEffect(() => {
     fetchFeatures();
-  }, [features]);
+  }, [features]);  
 
   if (loading) {
+    if(!features.length ) {
+      setLoading(false);
+      return
+    }
     return <div>Loading...</div>;
   }
 
@@ -73,13 +89,13 @@ export const InfoWindowContent = memo(({ features }) => {
     return <div>Error: {error}</div>;
   }
 
-  if (selectedFeatures.length > 0) {
-    // const marker = selectedFeatures[0]; // Single feature case
-    // return <PostSummary marker={marker} />;
+  if (selectedFeatures.length > 0) {  
+    // Sort selectedFeatures by postDate in descending order (latest date first)
+    const sortedFeatures = selectedFeatures.sort((a, b) => new Date(b.postDate) - new Date(a.postDate));
     return (
       <div>
-        <h4>{selectedFeatures.length} features found:</h4>
-        {selectedFeatures.map((marker) => (          
+        <h4>Pins Loaded: {selectedFeatures.length}</h4>
+        {sortedFeatures.map((marker) => (
           <PostSummary key={marker.postLink} marker={marker} />
         ))}
       </div>

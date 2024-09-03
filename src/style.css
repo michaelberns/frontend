@@ -1,10 +1,9 @@
-.custom-marker-clustering-map { 
+.custom-marker-clustering-map {
   -webkit-user-select: none; /* Safari */ 
   -moz-user-select: none; /* Firefox */ 
   -ms-user-select: none; /* Internet Explorer/Edge */ 
   user-select: none; /* Non-prefixed version, currently supported by Chrome, Opera and Edge */ 
-  }
-
+}
 
 @keyframes appear {
   from {
@@ -180,8 +179,8 @@
   height: 100%;
 
   .loader {
-      width: 80px;
-      height: 80px;
+      max-width: 80px;
+      max-height: 80px;
       animation: spin 2s linear infinite;
       
       img {
@@ -213,16 +212,44 @@
 
 .logo-with-text {
   position: fixed;
-  bottom: -5px;
+  bottom: 2px;
   z-index: 100;
   width: 175px;
   left: 50%;
   transform: translateX(-50%);
+  cursor: pointer;
+}
 
-  img {
-      width: 100%;
+.logo-with-text img {
+  width: 100%;
+  transition: transform 0.3s ease;
+}
+
+.logo-with-text img.wiggle {
+  animation: wiggle 0.5s ease-in-out; /* Runs wiggle animation once */
+}
+
+.logo-with-text:hover img {
+  transform: scale(1.1);
+}
+
+@keyframes wiggle {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(3deg);
+  }
+  50% {
+    transform: rotate(-3deg);
+  }
+  75% {
+    transform: rotate(3deg);
   }
 }
+
+
+
 
 /*Filter */
 
@@ -547,7 +574,7 @@ input:checked+.slider:before {
     .close-btn {
       position: absolute; /* Position it absolutely within the container */
         top: 5px; /* Distance from the top of the container */
-        right: 5px; /* Distance from the right side of the container */
+        right: 15px; /* Distance from the right side of the container */
         background-color: transparent;
         border: none;
         font-size: 1rem;
@@ -581,7 +608,7 @@ input:checked+.slider:before {
 
 /*Filter End*/
 
-@media screen and (min-width: 600px) {
+@media screen and (min-width: 800px) {
   .LocationPicker {
     width: 45%;
   }

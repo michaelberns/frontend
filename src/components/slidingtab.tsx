@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './SlidingTab.css';
 import { InfoWindowContent } from './info-window-content';
 
-
-
-function SlidingTab({ infowindowData }) {
+function SlidingTab({ infowindowData, username, pinCount }) {
   const [isOpen, setIsOpen] = useState(false);
 
   // Open the tab whenever infowindowData is updated

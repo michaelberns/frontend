@@ -28,7 +28,7 @@ export const FeaturesClusterMarker = ({
     () => {
       if (size > maxClickableCluster) {        
         setGlobalLocation({ location: position });
-        setGlobalZoom(6)     
+        setGlobalZoom(6)
       } else {
         onMarkerClick && onMarkerClick(marker!, clusterId)
       }

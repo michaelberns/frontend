@@ -9,7 +9,7 @@ import { ClusteredMarkers } from './components/clustered-markers';
 
 import logo from './assets/worldmappin-logo.png';
 import logoWithText from './assets/worldmappin-logo-text.png';
-import locationpng from './assets/location.png'
+import locationpng from './assets/location.png';
 
 import {convertDatafromApitoGeojson} from './components/convertDataFromApi'
 
@@ -18,6 +18,8 @@ import { Feature, Point } from 'geojson';
 
 import SlidingTab from './components/slidingtab';
 import FilterComponent from './components/FilterComponent';
+import SlidingUserTab from './components/userSlidingTab';
+import BottomLogoClick from './components/BottomLogoClick';
 
 import { PlacePicker} from '@googlemaps/extended-component-library/react';
 
@@ -30,7 +32,7 @@ const API_KEY = (process.env.GOOGLE_MAPS_API_KEY as string) ?? globalThis.GOOGLE
 
 const App = () => {
   const [geojson, setGeojson] = useState(null);
-  const [numClusters, setNumClusters] = useState(0);  
+  const [numClusters, setNumClusters] = useState(0);
 
   type MarkerPosition = {
     lat: number;
@@ -64,8 +66,15 @@ const App = () => {
   const [performanceTest , setPerformanceTest] = useState(false);
   const [lowEndDevice , setLowEndDevice] = useState(false);
 
+  const [showUsernameProfile, setShowUsernameProfile] = useState(false);
+
   let usernameProvided = false;
   var usernamep = '';
+
+  const [showUsername, setShowUsername] = useState('');
+  const [showUsersNumberOfPins, setShowUsersNumberOfPins] = useState(0);
+
+  const [isbottomLogoClick, setIsbottomLogoClick] = useState(false);
 
   if (!performanceTest){
     const start = performance.now();
@@ -73,7 +82,7 @@ const App = () => {
     for (let i = 0; i < 1e7; i++) {} // Arbitrary task for benchmarking
     const end = performance.now();
     console.log(`Time taken: ${end - start}ms`);
-    if (end - start > 10) {
+    if (end - start > 100) {
         console.log('This might be a low-end device based on execution time.');
         setLowEndDevice(true)
     }
@@ -92,6 +101,10 @@ const App = () => {
     if (username.startsWith('@') && fetchingMarkers) {
       usernameProvided = true;
       usernamep = username.substring(1);
+      useEffect(() => { 
+        setShowUsername(usernamep);
+        setShowUsernameProfile(true)
+      });
     } else {
       usernameProvided = false;
     }
@@ -130,7 +143,7 @@ const App = () => {
   
   //Setting the loading state to false when map tiles loaded
   const handleTilesLoaded = () => {
-    setLoading(false); // Set loading to false when tiles are loaded
+    setFetchingMarkers(false); // Set loading to false when tiles are loaded
   };
   
   //Handelsclick on Get Code Browser mode
@@ -139,7 +152,7 @@ const App = () => {
     setShowfiltersettings(false)
     toggleCodeMode();
     if(codeMode)
-    setLoading(true);
+      setFetchingMarkers(true);
   }
 
 
@@ -193,9 +206,15 @@ const App = () => {
     try {
       const response = await axios.post('https://worldmappin.com/api/marker/0/150000/', updatedParams);
       // console.log(updatedParams)
-      // console.log(response.data)      
+      // console.log(response.data)
       void convertDatafromApitoGeojson(response.data).then(data => setGeojson(data));
-      
+      if(updatedParams.author) {        
+        setShowUsernameProfile(true)
+        setShowUsername(updatedParams.author)
+        setShowUsersNumberOfPins(response.data.length)        
+      } else{
+        setShowUsernameProfile(false)
+      }
     } catch (err) {
         console.error('Error fetching feature data:', err);
     } finally {
@@ -221,6 +240,39 @@ const App = () => {
     console.log("Position set to:", poss);
   }
 
+  const handleClickBottomLogo = () => {
+    setIsbottomLogoClick(true)
+  }
+
+  // Select the image element
+  //const img = document.querySelector('.logo-with-text img');
+
+  // Function to add the wiggle class, triggering the animation
+  function triggerWiggle() {
+    const contentElement = document.querySelector('.logo-with-text img') as HTMLDivElement; 
+    if (contentElement) {
+        contentElement.classList.add('wiggle');
+    }
+
+    setTimeout(() => {
+      contentElement.classList.remove('wiggle');
+    }, 5000); // Match the duration of the wiggle animation (0.5s)
+  } 
+
+  // Trigger the wiggle function every second
+  setInterval(triggerWiggle, 10000);
+  //console.log(window.innerWidth)
+  const handleCloseBottomLogoClick = () => {
+    setIsbottomLogoClick(false);
+  };
+
+  function handleteaminfofetch() {
+    setFetchingMarkers(true)
+  };
+
+  function handleteaminfofetchdone() {
+    setFetchingMarkers(false)
+  }
 
   return (
     <APIProvider apiKey={API_KEY} version={'beta'}>
@@ -254,7 +306,7 @@ const App = () => {
       </div>
 
       <div className="logo-with-text">
-        <img src={logoWithText} alt="" />
+        <img onClick={handleClickBottomLogo} src={logoWithText} alt="" />
       </div>
 
       <div className="button-container">
@@ -365,7 +417,7 @@ const App = () => {
               setNumClusters={setNumClusters}
               setInfowindowData={setInfowindowData}
             />
-          )}
+          )}          
 
           {codeMode &&
               <div className="code-mode-div">
@@ -429,6 +481,15 @@ const App = () => {
       
           {infowindowData && (
             <SlidingTab infowindowData={infowindowData.features} />
+          )}
+
+          {isbottomLogoClick && (
+            <BottomLogoClick onClose={handleCloseBottomLogoClick} onfetch={handleteaminfofetch} fetchdone={handleteaminfofetchdone}/>
+          )}
+
+          {/* Display the user slidingbar */}
+          {showUsernameProfile && (
+            <SlidingUserTab userInfowindowData={geojson} username={showUsername} pinCount={showUsersNumberOfPins}/>
           )}
 
         </Map>
