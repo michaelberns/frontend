@@ -6,10 +6,16 @@ import axios from 'axios'
 import LineGraph from './LineGraph'
 import initializeClient from './initializeClient'
 
-const node = await initializeClient();
-
+let node;
 let client;
-if (node) { client = new Client(node);}
+
+async function initializeNode(){
+  node = await initializeClient();  // Assume this function correctly initializes the client
+  if (node !== undefined) {
+    client = new Client(node);  // Initialize client after node is ready
+  }
+}
+
 const max = 1;
 
 const usernameArray = [
@@ -81,6 +87,11 @@ function sortPinsByContinent(data) {
 }
 
 const BottomLogoClick = ({ onClose, onfetch, fetchdone}) => {
+
+  useEffect(() => {
+    initializeNode();
+  }, []);
+
   const [userProfiles, setUserProfiles] = useState([]);
   const [onlyLoadDataOnce, setOnlyLoadDataOnce] = useState(true);
 
@@ -93,8 +104,8 @@ const BottomLogoClick = ({ onClose, onfetch, fetchdone}) => {
 
   useEffect(() => {
     fetchProfiles();
-    if(onlyLoadDataOnce){
-      if(onlyLoadonce){
+    if(onlyLoadDataOnce){      
+      if(onlyLoadonce){        
         loadpinsdata();
         fetchthelast7days();
         setOnlyLoadDataOnce(false);
@@ -123,30 +134,32 @@ const BottomLogoClick = ({ onClose, onfetch, fetchdone}) => {
 
   // Fetch profile details for each username
   const fetchProfiles = async () => {
-    const profiles = await Promise.all(
-      usernameArray.map(async (user) => {
-        let username = user.username
-        let description = user.description
-        try {
-          const _accounts = await client.database.call('lookup_accounts', [username, max]);
-          if (_accounts.length > 0) {
-            const accountDetails = await client.database.call('get_accounts', [_accounts]);
-            if (accountDetails.length > 0) {
-              const metadata = accountDetails[0].posting_json_metadata;
-              const parsedMetadata = JSON.parse(metadata);
-              const userProfile = parsedMetadata.profile;
-              const profileImage = userProfile?.profile_image || 'path/to/default-profile-picture.png';
-              return { username, description, profileImage};
+    if(node){ 
+      const profiles = await Promise.all(
+        usernameArray.map(async (user) => {
+          let username = user.username
+          let description = user.description
+          try {
+            const _accounts = await client.database.call('lookup_accounts', [username, max]);
+            if (_accounts.length > 0) {
+              const accountDetails = await client.database.call('get_accounts', [_accounts]);
+              if (accountDetails.length > 0) {
+                const metadata = accountDetails[0].posting_json_metadata;
+                const parsedMetadata = JSON.parse(metadata);
+                const userProfile = parsedMetadata.profile;
+                const profileImage = userProfile?.profile_image || 'path/to/default-profile-picture.png';
+                return { username, description, profileImage};
+              }
             }
+          } catch (error) {
+            console.error('Error fetching accounts:', error);
           }
-        } catch (error) {
-          console.error('Error fetching accounts:', error);
-        }
-        return { username, description, profileImage: 'path/to/default-profile-picture.png' }; // Default profile image on error
-      })
-    );
-    setUserProfiles(profiles);
-    console.log(profiles)
+          return { username, description, profileImage: 'path/to/default-profile-picture.png' }; // Default profile image on error
+        })
+      );
+      setUserProfiles(profiles);
+      console.log(profiles)
+    }
   };
 
   const fetchData = async (filterParams) => {

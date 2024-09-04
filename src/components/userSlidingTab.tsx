@@ -4,16 +4,31 @@ import { InfoWindowContent } from './info-window-content';
 import initializeClient from './initializeClient'
 import { Client } from "@hiveio/dhive";
 
-const node = await initializeClient();
-
+let node;
 let client;
-if (node) { client = new Client(node);}
+
+async function initializeNode(){
+  node = await initializeClient();  // Assume this function correctly initializes the client
+  if (node !== undefined) {
+    client = new Client(node);  // Initialize client after node is ready
+  }
+}
+
+if (node !== undefined) { client = new Client(node);}
+
 const max = 1; // Maximum number of accounts to return
 
 var onlyCallApiTwice = 2; // Not sure why only calling it once doesn't work
 var usernamedifferent = "";
 
 function SlidingUserTab({ userInfowindowData, username, pinCount }) {
+
+  useEffect(() => {
+    initializeNode();
+  }, []);
+  
+  
+
   const [isOpen, setIsOpen] = useState(false);
   const [profilePic, setProfilePic] = useState('path/to/default-profile-picture.png');
   const [profileDetails, setProfileDetails] = useState({
@@ -64,7 +79,7 @@ function SlidingUserTab({ userInfowindowData, username, pinCount }) {
     onlyCallApiTwice = 2;
   }
 
-  if (onlyCallApiTwice) {
+  if (onlyCallApiTwice && node) {
     handleUsernameSubmit(username);
     onlyCallApiTwice = onlyCallApiTwice-1;
     usernamedifferent = username;
