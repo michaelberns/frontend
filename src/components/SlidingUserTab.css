@@ -54,11 +54,17 @@
 }
 
 .profile-column {
-  flex: 1; /* Adjust based on preference */
+  flex: 1; /* Adjust based on preference */  
 }
 
 .details-column {
   flex: 3; /* Adjust based on preference */
+  
+}
+
+.details-column p {
+  float: left;
+  clear: both;
 }
 
 .username {
@@ -101,14 +107,21 @@
   align-self: flex-end;
   border: 3px solid #404c54; /* Initial border color */
   padding: 10px;
-  animation: spinColors 2s linear infinite;
   border-radius: 25%;
-  min-width: 100px; /* Adjust based on your typical content width */
-  max-width: 100px;
+  border: 3px solid #404c54; /* Initial border color */
+  padding: 8px 12px; /* Adjust padding for a balanced look */
+  border-radius: 12px; /* Rounded corners */  
+  max-width: 100%; /* MAKE THIS WORK WITH ANY TEXT */
   white-space: nowrap;
-  overflow: visible; /* You can choose 'hidden' or 'scroll' if preferred */
-  text-overflow: ellipsis; /* Use if 'overflow' is set to 'hidden' */
-  animation: spinColors 3s linear infinite;
+  overflow: hidden; /* Hides overflow neatly */
+  text-overflow: ellipsis;
+  transition: 0.3s; /* Smooth hover effects */
+  animation: spinColors 3s linear infinite; /* Retain spinning border animation */
+  z-index: 1; /* Keeps the count visible above background effects */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Adds a subtle shadow */
+  display: inline-block;
+  text-align: left;
+  margin: 0;
 }
 
 @keyframes spinColors {
@@ -125,6 +138,7 @@
     border-color: #404c54; /* Dark-Grey */
   }
 }
+
 
 .pin-count-Minimized {
   margin: 0;

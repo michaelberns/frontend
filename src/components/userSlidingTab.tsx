@@ -1,9 +1,13 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import './SlidingUserTab.css';
 import { InfoWindowContent } from './info-window-content';
+import initializeClient from './initializeClient'
 import { Client } from "@hiveio/dhive";
 
-const client = new Client('https://hive-api.arcange.eu'); // TODO add switching between nodes https://beacon.peakd.com/
+const node = await initializeClient();
+
+let client;
+if (node) { client = new Client(node);}
 const max = 1; // Maximum number of accounts to return
 
 var onlyCallApiTwice = 2; // Not sure why only calling it once doesn't work
@@ -29,19 +33,22 @@ function SlidingUserTab({ userInfowindowData, username, pinCount }) {
   // Function to handle the username input and query the blockchain
   const handleUsernameSubmit = async (username) => {
     try {
-      const _accounts = await client.database.call('lookup_accounts', [username, max]);
+      const _accounts = await client.database.call('lookup_accounts', [username, max]);      
       if (_accounts.length > 0) {
         setIsMinimized(true);
         setIsOpen(false);
         const accountDetails = await client.database.call('get_accounts', [_accounts]);
+        // console.log(accountDetails)
         if (accountDetails.length > 0) {
-          const metadata = accountDetails[0].posting_json_metadata;
+          const metadata = accountDetails[0].posting_json_metadata;          
           const parsedMetadata = JSON.parse(metadata);
           const userProfile = parsedMetadata.profile;
           const profileImage = userProfile?.profile_image;
+
+          const unsername_alternative = accountDetails[0];          
           if (profileImage) setProfilePic(profileImage);
           setProfileDetails({
-            name: userProfile?.name || 'No name provided',
+            name: userProfile?.name || unsername_alternative?.name,
             about: userProfile?.about || 'No description available',
             location: userProfile?.location || 'Location not specified',
             website: userProfile?.website || '',
@@ -181,9 +188,9 @@ function SlidingUserTab({ userInfowindowData, username, pinCount }) {
                   <p className="about">{profileDetails.about}</p>
                   <p className="location">{profileDetails.location}</p>
                   {profileDetails.website && (
-                    <a href={profileDetails.website} target="_blank" rel="noopener noreferrer" className="website">
+                    <p><a href={profileDetails.website} target="_blank" rel="noopener noreferrer" className="website">
                       {profileDetails.website}
-                    </a>
+                    </a></p>
                   )}
                   <p className="pin-count">{pinCount || 0} Pins</p>
                 </div>

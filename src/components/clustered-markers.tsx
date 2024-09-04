@@ -24,7 +24,7 @@ const superclusterOptions: Supercluster.Options<
   extent: 256,
   radius: 60,
   maxZoom: 16,
-  minZoom: 3
+  minZoom: 4
 };
 
 export const ClusteredMarkers = ({

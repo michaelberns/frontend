@@ -4,8 +4,12 @@ import { Client } from "@hiveio/dhive";
 import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom';
 import axios from 'axios'
 import LineGraph from './LineGraph'
+import initializeClient from './initializeClient'
 
-const client = new Client('https://api.hive.blog');
+const node = await initializeClient();
+
+let client;
+if (node) { client = new Client(node);}
 const max = 1;
 
 const usernameArray = [

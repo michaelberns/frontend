@@ -1,9 +1,9 @@
 import React, {useEffect, useCallback} from 'react';
 import {AdvancedMarker, useAdvancedMarkerRef} from '@vis.gl/react-google-maps';
 
-import { setGlobalLocation, setGlobalZoom } from '../app'
+import { setGlobalLocation, setGlobalZoom, mapZoom } from '../app'
 
-const maxClickableCluster = 3000;
+const maxClickableCluster = 50;
 
 type TreeClusterMarkerProps = {
   clusterId: number;
@@ -26,9 +26,9 @@ export const FeaturesClusterMarker = ({
   const [markerRef, marker] = useAdvancedMarkerRef();
   const handleClick = useCallback(
     () => {
-      if (size > maxClickableCluster) {        
+      if (size > maxClickableCluster && (mapZoom < 14 )) {        
         setGlobalLocation({ location: position });
-        setGlobalZoom(6)
+        setGlobalZoom(mapZoom+3)
       } else {
         onMarkerClick && onMarkerClick(marker!, clusterId)
       }

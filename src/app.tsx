@@ -27,6 +27,7 @@ import { PlacePicker as TPlacePicker } from '@googlemaps/extended-component-libr
 
 export let setGlobalLocation: (location: google.maps.places.Place | undefined) => void;
 export let setGlobalZoom: (zoom: number | undefined) => void;
+export let mapZoom = 3;
 
 const API_KEY = (process.env.GOOGLE_MAPS_API_KEY as string) ?? globalThis.GOOGLE_MAPS_API_KEY;
 
@@ -138,7 +139,8 @@ const App = () => {
       permlink: '',
       curated_only: filterData ? filterData.isCurated : false
     });
-    setLowEndDevice(false) // This is to make the filter work for the user (even though they probably won't be able to fetch 100k pins)
+    setLowEndDevice(false); // This is to make the filter work for the user (even though they probably won't be able to fetch 100k pins)
+    setShowfiltersettings(false);
   };
   
   //Setting the loading state to false when map tiles loaded
@@ -151,8 +153,8 @@ const App = () => {
     setInfowindowData(undefined)
     setShowfiltersettings(false)
     toggleCodeMode();
-    if(codeMode)
-      setFetchingMarkers(true);
+    // if(codeMode)
+    //   setFetchingMarkers(true);
   }
 
 
@@ -242,10 +244,7 @@ const App = () => {
 
   const handleClickBottomLogo = () => {
     setIsbottomLogoClick(true)
-  }
-
-  // Select the image element
-  //const img = document.querySelector('.logo-with-text img');
+  }  
 
   // Function to add the wiggle class, triggering the animation
   function triggerWiggle() {
@@ -370,9 +369,9 @@ const App = () => {
         <Map
           onTilesLoaded={handleTilesLoaded}          
           mapId={'edce5dcfb5575af1'}
-          defaultCenter={{ lat: 20, lng: 20 }}
-          defaultZoom={1}
-          minZoom={1}
+          defaultCenter={{ lat: 50, lng: 20 }}
+          defaultZoom={4}
+          minZoom={4}
           maxZoom={15}
           zoomControl={true}
           gestureHandling={'greedy'}
@@ -397,9 +396,11 @@ const App = () => {
           zoom={
             location?.location ? mylocationzoom : undefined //: undefined
           }          
-          onIdle={() => {setLocation(undefined); setMyLocationZoom(undefined)}}
+          onIdle={(e) => {setLocation(undefined); setMyLocationZoom(undefined); mapZoom = e.map.getZoom();}}
           
           onClick={(e) => {
+            // mapZoom = e.map.getZoom();
+
             if(codeMode){
               const latLng = e.detail?.latLng;
 
