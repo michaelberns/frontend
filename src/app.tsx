@@ -203,26 +203,32 @@ const App = () => {
   async function newSearchParams(s) {
     const updatedParams = { ...searchParams, ...s };
 
-    setSearchParams(updatedParams); // This takes a little longer so it's better to pass the updatedParams directly to the api
-    setLoading(true);
+    setSearchParams(updatedParams); // This takes a little longer so it's better to pass the updatedParams directly to the api    
+    setFetchingMarkers(true)
     try {
       const response = await axios.post('https://worldmappin.com/api/marker/0/150000/', updatedParams);
       // console.log(updatedParams)
       // console.log(response.data)
       void convertDatafromApitoGeojson(response.data).then(data => setGeojson(data));
-      if(updatedParams.author) {        
-        setShowUsernameProfile(true)
-        setShowUsername(updatedParams.author)
-        setShowUsersNumberOfPins(response.data.length)        
+     
+      if(updatedParams.author) {
+        ifusername( response.data.length, updatedParams.author);         
       } else{
         setShowUsernameProfile(false)
       }
+
     } catch (err) {
         console.error('Error fetching feature data:', err);
     } finally {
       setFetchingMarkers(false)
     }
   }
+
+  function ifusername( length, username) {
+    setShowUsernameProfile(true)
+    setShowUsername(username)
+    setShowUsersNumberOfPins(length)
+  };
 
   //const map = useMap();
   const mapRef = useRef(null);
@@ -272,6 +278,12 @@ const App = () => {
   function handleteaminfofetchdone() {
     setFetchingMarkers(false)
   }
+
+  useEffect(() => {
+    if (showUsernameProfile) { // Assuming this is a prop or state indicating when to open the tab
+      setShowUsernameProfile(true);
+    }
+  }, [showUsernameProfile]); // Re-run this effect if showUsernameProfile changes
 
   return (
     <APIProvider apiKey={API_KEY} version={'beta'}>
@@ -489,13 +501,16 @@ const App = () => {
           )}
 
           {/* Display the user slidingbar */}
+
           {showUsernameProfile && (
             <SlidingUserTab userInfowindowData={geojson} username={showUsername} pinCount={showUsersNumberOfPins}/>
           )}
 
         </Map>
       
-      
+        {showUsernameProfile && (
+            <SlidingUserTab userInfowindowData={geojson} username={showUsername} pinCount={showUsersNumberOfPins}/>
+        )}
     </APIProvider>
   );
 };

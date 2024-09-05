@@ -238,7 +238,7 @@ button {
 
   /* When the tab is open on smaller screens */
   .user-side-tab.open {
-    height: 50%; /* Expand to 50% of the screen height */
+    height: 75%; /* Expand to 50% of the screen height */
     width: 95%; /* Keep 95% width */
     visibility: visible;
   }

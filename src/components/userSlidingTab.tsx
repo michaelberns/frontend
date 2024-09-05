@@ -1,18 +1,11 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import './SlidingUserTab.css';
 import { InfoWindowContent } from './info-window-content';
-import initializeClient from './initializeClient'
+import initializeClient from './initializeClient';
 import { Client } from "@hiveio/dhive";
 
 let node;
 let client;
-
-async function initializeNode(){
-  node = await initializeClient();  // Assume this function correctly initializes the client
-  if (node !== undefined) {
-    client = new Client(node);  // Initialize client after node is ready
-  }
-}
 
 if (node !== undefined) { client = new Client(node);}
 
@@ -23,10 +16,13 @@ var usernamedifferent = "";
 
 function SlidingUserTab({ userInfowindowData, username, pinCount }) {
 
-  useEffect(() => {
-    initializeNode();
-  }, []);
-  
+  async function initializeNode(){
+    node = await initializeClient();  // Assume this function correctly initializes the client
+    if (node !== undefined) {
+      client = new Client(node);  // Initialize client after node is ready
+      handleUsernameSubmit(username);
+    }
+  }
   
 
   const [isOpen, setIsOpen] = useState(false);
@@ -48,10 +44,10 @@ function SlidingUserTab({ userInfowindowData, username, pinCount }) {
   // Function to handle the username input and query the blockchain
   const handleUsernameSubmit = async (username) => {
     try {
-      const _accounts = await client.database.call('lookup_accounts', [username, max]);      
-      if (_accounts.length > 0) {
+      const _accounts = await client.database.call('lookup_accounts', [username, max]);             
+      if (_accounts.length > 0) {   
         setIsMinimized(true);
-        setIsOpen(false);
+        setIsOpen(false);  
         const accountDetails = await client.database.call('get_accounts', [_accounts]);
         // console.log(accountDetails)
         if (accountDetails.length > 0) {
@@ -73,22 +69,27 @@ function SlidingUserTab({ userInfowindowData, username, pinCount }) {
     } catch (error) {
       console.error('Error fetching accounts:', error);
     }
-  };
+  };  
 
-  if(usernamedifferent !== username) {
-    onlyCallApiTwice = 2;
-  }
+  useEffect(() => {
+    if(usernamedifferent !== username) {
+      onlyCallApiTwice = 2;
+    }
 
-  if (onlyCallApiTwice && node) {
-    handleUsernameSubmit(username);
-    onlyCallApiTwice = onlyCallApiTwice-1;
-    usernamedifferent = username;
-  }
+    if (onlyCallApiTwice) {
+      initializeNode();
+      onlyCallApiTwice = onlyCallApiTwice-1;
+      usernamedifferent = username;
+      setIsMinimized(true); 
+    }
+  })
 
   // Open the tab whenever infowindowData is updated
   // useEffect(() => {
-  //   if (userInfowindowData) {
-  //     setIsOpen(true); // Open the tab when infowindowData is provided
+  //   initializeNode();
+  //   if (userInfowindowData && node) {
+  //     handleUsernameSubmit(username);
+  //     setIsMinimized(true); // Open the tab when infowindowData is provided
   //   }
   // }, [userInfowindowData]);
 
@@ -102,91 +103,11 @@ function SlidingUserTab({ userInfowindowData, username, pinCount }) {
     setIsMinimized(true);
   };
 
-  // Handle mousedown or touchstart on resize bar to start resizing
-  const handleStartResize = (e) => {
-    setIsResizing(true);
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    setStartY(clientY);
-    setStartHeight(userSideTabRef.current.offsetHeight);
-    document.body.style.cursor = 'ns-resize'; // Change cursor during resize
-    //document.body.classList.add('no-scroll'); // Disable scrolling
-    
-    // Disable scrolling on the specific content area with class `.content`
-    const contentElement = document.querySelector('.user-side-tab.open') as HTMLDivElement;
-    if (contentElement) {
-      contentElement.classList.add('no-scroll');
-    }
-    //e.preventDefault();
-  };
-
-  const updateHeight = useCallback(
-    (clientY) => {
-      const newHeight = startHeight - (clientY - startY);
-      if (newHeight >= 50 && newHeight <= window.innerHeight * 0.95) {
-        userSideTabRef.current.style.height = `${newHeight}px`;
-      }
-    },
-    [startHeight, startY]
-  );
-
-  // Handle mousemove or touchmove to adjust the height of the sliding tab
-  const handleResize = useCallback(
-    (e) => {
-      if (isResizing) {
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        if (animationFrameRef.current) {
-          cancelAnimationFrame(animationFrameRef.current);
-        }
-        animationFrameRef.current = requestAnimationFrame(() => updateHeight(clientY));
-      }
-    },
-    [isResizing, updateHeight]
-  );
-
-
-  // Handle mouseup or touchend to stop resizing
-  const handleEndResize = () => {
-    setIsResizing(false);
-    document.body.style.cursor = ''; // Reset cursor after resize
-    const contentElement = document.querySelector('.user-side-tab.open') as HTMLDivElement; 
-    if (contentElement) {
-        contentElement.classList.remove('no-scroll');
-    }
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
-    }
-  };
-
-  // Add event listeners for resizing when component mounts
-  useEffect(() => {
-    if (isResizing) {
-      document.addEventListener('mousemove', handleResize);
-      document.addEventListener('mouseup', handleEndResize);
-      document.addEventListener('touchmove', handleResize, { passive: false });
-      document.addEventListener('touchend', handleEndResize);
-    } else {
-      document.removeEventListener('mousemove', handleResize);
-      document.removeEventListener('mouseup', handleEndResize);
-      document.removeEventListener('touchmove', handleResize, { passive: false });
-      document.removeEventListener('touchend', handleEndResize);
-    }
-
-    return () => {
-      document.removeEventListener('mousemove', handleResize);
-      document.removeEventListener('mouseup', handleEndResize);
-      document.removeEventListener('touchmove', handleResize, { passive: false });
-      document.removeEventListener('touchend', handleEndResize);
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
-  }, [isResizing, handleResize]);
 
   return (
     <div>
       {/* Sliding tab */}
       <div ref={userSideTabRef} className={`user-side-tab ${isOpen ? 'open' : ''}`}>
-        <div className="resize-bar" onMouseDown={handleStartResize} onTouchStart={handleStartResize}></div>
         <div className="content">
           {/* User information */}
           <div className="profile-content">

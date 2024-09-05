@@ -9,13 +9,6 @@ import initializeClient from './initializeClient'
 let node;
 let client;
 
-async function initializeNode(){
-  node = await initializeClient();  // Assume this function correctly initializes the client
-  if (node !== undefined) {
-    client = new Client(node);  // Initialize client after node is ready
-  }
-}
-
 const max = 1;
 
 const usernameArray = [
@@ -33,7 +26,9 @@ const usernameArray = [
 ];
 
 var onlyLoadonce = true;
-  
+
+
+var userProfiles = []; 
 var results = [];
 
 // Define a type for the continent count entries
@@ -87,32 +82,22 @@ function sortPinsByContinent(data) {
 }
 
 const BottomLogoClick = ({ onClose, onfetch, fetchdone}) => {
+  
+  async function initializeNode(){
+    node = await initializeClient();  // Assume this function correctly initializes the client
+    if (node !== undefined) {
+      client = new Client(node);  // Initialize client after node is ready
+      fetchProfiles()
+    }
+  }
 
-  useEffect(() => {
-    initializeNode();
-  }, []);
-
-  const [userProfiles, setUserProfiles] = useState([]);
   const [onlyLoadDataOnce, setOnlyLoadDataOnce] = useState(true);
-
   
   // Fetch all pins
   const params = useParams();
   const [searchParams, setSearchParams] = useState(
     params?.username ? { author: params.username } : (params?.permlink ? { permlink: params.permlink } : (params?.tag ? { tags: [params?.tag] } : { curated_only: false }))
-  );
-
-  useEffect(() => {
-    fetchProfiles();
-    if(onlyLoadDataOnce){      
-      if(onlyLoadonce){        
-        loadpinsdata();
-        fetchthelast7days();
-        setOnlyLoadDataOnce(false);
-        onlyLoadonce = false;    
-      }     
-    }
-  }, []);
+  );  
 
   async function loadpinsdata() {
     try {
@@ -157,7 +142,7 @@ const BottomLogoClick = ({ onClose, onfetch, fetchdone}) => {
           return { username, description, profileImage: 'path/to/default-profile-picture.png' }; // Default profile image on error
         })
       );
-      setUserProfiles(profiles);
+      userProfiles = profiles;
       console.log(profiles)
     }
   };
@@ -172,7 +157,21 @@ const BottomLogoClick = ({ onClose, onfetch, fetchdone}) => {
       console.error('Error fetching data:', err);
       return null;  // Return null in case of an error
     }
-  };
+  };  
+
+  useEffect(() => {    
+    if(onlyLoadDataOnce){      
+      if(onlyLoadonce){      
+        initializeNode();     
+        loadpinsdata();
+        fetchthelast7days();
+        setOnlyLoadDataOnce(false);
+        onlyLoadonce = false;    
+      }     
+    }
+
+    console.log(userProfiles)
+  }, []);
 
   function fetchthelast7days() {  
     const formattedResults = [];
@@ -216,7 +215,7 @@ const BottomLogoClick = ({ onClose, onfetch, fetchdone}) => {
   // console.log(continentCounts)
   // console.log(results);
 
-  if(continentCounts.length !== 0)
+  if(continentCounts.length !== 0 && node)
   return (
     <div className="overlay">
       <div className="modal" style={{ position: 'relative' }}>

@@ -86,7 +86,6 @@ const FilterComponent = ({ onFilter, searchParams }) => {
       endDate: dates.endDate.toISOString(),
       isCurated
     });
-    
   };
 
   const clearFilter = () => {
@@ -106,7 +105,7 @@ const FilterComponent = ({ onFilter, searchParams }) => {
   useEffect(() => {
     // Ensure there's a valid range before applying the filter
     if (!isFirstRender) {
-      // applyFilter();
+      //applyFilter();
     } else {
       setIsFirstRender(false);
     }
