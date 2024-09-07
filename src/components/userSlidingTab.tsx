@@ -4,6 +4,10 @@ import { InfoWindowContent } from './info-window-content';
 import initializeClient from './initializeClient';
 import { Client } from "@hiveio/dhive";
 
+import mappinLogo from '../assets/noProfilefound.png';
+
+import { isMenuOpen } from '../app'
+
 let node;
 let client;
 
@@ -14,7 +18,7 @@ const max = 1; // Maximum number of accounts to return
 var onlyCallApiTwice = 2; // Not sure why only calling it once doesn't work
 var usernamedifferent = "";
 
-function SlidingUserTab({ userInfowindowData, username, pinCount }) {
+function SlidingUserTab({ userInfowindowData, username, pinCount, toggleMenuApp }) {
 
   async function initializeNode(){
     node = await initializeClient();  // Assume this function correctly initializes the client
@@ -43,7 +47,7 @@ function SlidingUserTab({ userInfowindowData, username, pinCount }) {
 
   // Function to handle the username input and query the blockchain
   const handleUsernameSubmit = async (username) => {
-    try {
+    try {     
       const _accounts = await client.database.call('lookup_accounts', [username, max]);             
       if (_accounts.length > 0) {   
         setIsMinimized(true);
@@ -68,11 +72,13 @@ function SlidingUserTab({ userInfowindowData, username, pinCount }) {
       }
     } catch (error) {
       console.error('Error fetching accounts:', error);
+      userNotFound();
     }
   };  
 
   useEffect(() => {
     if(usernamedifferent !== username) {
+      toggleMenuApp();
       onlyCallApiTwice = 2;
     }
 
@@ -83,6 +89,16 @@ function SlidingUserTab({ userInfowindowData, username, pinCount }) {
       setIsMinimized(true); 
     }
   })
+
+  const userNotFound = () => {
+    setProfilePic(mappinLogo);
+    setProfileDetails({
+      name: 'Username not found',
+      about: '',
+      location: '',
+      website: '',
+    });
+  }
 
   // Open the tab whenever infowindowData is updated
   // useEffect(() => {
@@ -102,7 +118,7 @@ function SlidingUserTab({ userInfowindowData, username, pinCount }) {
     setIsOpen(false);
     setIsMinimized(true);
   };
-
+  
 
   return (
     <div>
@@ -114,7 +130,7 @@ function SlidingUserTab({ userInfowindowData, username, pinCount }) {
           <div className="user-info">
             <div className='profile-column'>
               <img src={profilePic} alt={`${username}'s profile`} className="profile-picture" />
-              <a href={`https://hive.blog/@${username}`} target="_blank" rel="noopener noreferrer" className="username-link">@{username}</a>
+              <a href={`https://peakd.com/@${username}`} target="_blank" rel="noopener noreferrer" className="username-link">@{username}</a>
             </div>
           </div>
             {!isMinimized && (
@@ -151,17 +167,17 @@ function SlidingUserTab({ userInfowindowData, username, pinCount }) {
       </div>
 
       {/* Minimized profile picture */}
-      {isMinimized && !isOpen && (
+      {(isMinimized && !isOpen) && (
         <div className="circle-container"><div className="circle"><div className="circle2">    
             <div className="minimized-profile">
             <img
                 src={profilePic}
                 alt={`${username}'s profile`}
                 className="minimized-profile-picture"
-                onClick={openTab} // Add this line to handle the click event
+                onClick={openTab}
             />
             <div className="column-link-n-pin">
-                <a href={`https://hive.blog/@${username}`} target="_blank" rel="noopener noreferrer" className="username-link">
+                <a href={`https://peakd.com/@${username}`} target="_blank" rel="noopener noreferrer" className="username-link">
                 @{username}
                 </a>
                 <p className="pin-count-Minimized">{pinCount || 0} Pins</p>

@@ -11,7 +11,7 @@
   padding-top: 60px; /* Place content 60px from the top */
   transition: 0.5s; /* Animation */
   color: rgb(0, 0, 0); /* Text color */
-  z-index: 1000; /* Ensure it's on top of other content */
+  z-index: 10000; /* Ensure it's on top of other content */
 }
 
 /* Content inside the tab */
@@ -39,7 +39,8 @@ button {
 
 /* When the tab is open */
 .side-tab.open {
-  width: 800px;
+  margin-top: 60px;
+  width: 800px;  
 }
 
 
@@ -129,10 +130,27 @@ button {
   }
 }
 
-@media screen and (max-width: 800px) {
+.post-summary:last-child {
+  margin-bottom: 130px;  /* More space for the last post only */
+}
+
+@media screen and (max-width: 800px) {  
   
   .side-tab.open {
+    margin-top: 0;
     width: 95%;
+    z-index: 10000; /* Ensure it's on top of other content */
+  }
+
+  .close-btn2 {
+    margin-top: 70px;
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      font-size: 36px;
+      text-decoration: none;
+      color: rgb(0, 0, 0);
+    
   }
 
   .side-tab .content {

@@ -20,7 +20,7 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
-  min-width: 900px; /* 800px Increased minimum width to make the modal bigger */
+  min-width: 900px;
   max-width: 65%; /* Ensures it doesn't exceed the viewport width */
   max-height: 70%; /* Limit modal height to avoid overflow */
   overflow-y: auto; /* Enable scrolling if content overflows */
@@ -62,7 +62,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  gap: 20px;
+  gap: 14px;
 }
 
 .left-section-team {
@@ -72,8 +72,7 @@
   display: flex; /* Set the container as a flexbox */  
   align-items: center; /* Center the items vertically */  
   display: flex;
-  max-height: 60vh;
-  /* overflow-y: auto;  Enable scrolling in the right section */
+  max-height: 60vh;  
 }
 
 .left-section-team .left-left h3 {
@@ -81,20 +80,32 @@
   margin-bottom: 10px;
 }
 
+.overflowleft {
+  overflow-y: auto;
+  
+  flex-direction: column;
+  display: flex; /* Set the container as a flexbox */  
+  align-items: center; /* Center the items vertically */  
+  display: flex;
+}
+
 .stats-list {
   list-style: none;
   padding: 0;
   margin: 0;
   top: 0;
-  width: 350px;
+  width: 100%;
+  max-width: 350px;
   border-bottom: 1px dotted #ccc;
 }
 
 .total-pins-display {
+  margin-right: 100px;
+  margin-left: 100px;
   display: flex;
   justify-content: space-between;
   padding: 10px;
-  margin-bottom: 35px;
+  margin-bottom: 30px;
   border: 3px solid;
   border-radius: 10%;
   animation: color-change 6s infinite;
@@ -102,7 +113,6 @@
   padding: 8px 12px;
   border-radius: 12px;
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis; 
   z-index: 1;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
@@ -168,7 +178,7 @@ li {
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-height: 60vh;
+  max-height: 65vh;
   overflow-y: auto;
 }
 
@@ -189,7 +199,7 @@ li {
   transition: background-color 0.2s;
   text-align: center; /* Center align the username text */
   width: 120px; /* Larger size for better visibility */
-  height: 120px;
+  height: 130px;
   gap: 3px;
   box-sizing: border-box; /* Ensures padding doesn't affect overall size */
 }
@@ -220,12 +230,12 @@ li {
 }
 
 .profile_description {
-  margin: 5px 0 0 0;
+  margin: 0px 0 0 0;
   padding: 5px;
-  font-size: 12px;
+  font-size: 10px;
   color: #707070;
   line-height: 1.4;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid #dddddd;
   padding-top: 8px;
   max-height: 40px;
   overflow: hidden;
@@ -235,7 +245,7 @@ li {
 }
 
 .team-member:hover {
-  background-color: #f0f0f0; /* Add a slight hover effect for better UX */
+  background-color: #f0f0f0;
 }
 
 .profile-pic {
@@ -262,7 +272,7 @@ li {
   }
 
   .stats-list {
-    width: 95%;
+    width: 100%;
   }
 
   .left-section-team {    

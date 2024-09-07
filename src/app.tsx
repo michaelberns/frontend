@@ -1,6 +1,6 @@
 import React, { Ref, useCallback, useEffect, useState, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
-import axios from 'axios'
+import axios from 'axios';
 import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom';
 
 import { APIProvider, InfoWindow, Map, useMap, AdvancedMarker, ControlPosition, MapControl } from '@vis.gl/react-google-maps';
@@ -19,15 +19,23 @@ import { Feature, Point } from 'geojson';
 import SlidingTab from './components/slidingtab';
 import FilterComponent from './components/FilterComponent';
 import SlidingUserTab from './components/userSlidingTab';
+import { InfoWindowContent } from './components/info-window-content';
+import './components/SlidingTab.css';
 import BottomLogoClick from './components/BottomLogoClick';
 
 import { PlacePicker} from '@googlemaps/extended-component-library/react';
 
 import { PlacePicker as TPlacePicker } from '@googlemaps/extended-component-library/place_picker.js';
 
+import './components/SlidingUserTab.css';
+
+//Navbar
+import Navbar from './components/Navbar';
+
 export let setGlobalLocation: (location: google.maps.places.Place | undefined) => void;
 export let setGlobalZoom: (zoom: number | undefined) => void;
 export let mapZoom = 3;
+export let isMenuOpen = false;
 
 const API_KEY = (process.env.GOOGLE_MAPS_API_KEY as string) ?? globalThis.GOOGLE_MAPS_API_KEY;
 
@@ -77,6 +85,16 @@ const App = () => {
 
   const [isbottomLogoClick, setIsbottomLogoClick] = useState(false);
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    if (window.innerWidth < 800) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }  
+  })
+
   if (!performanceTest){
     const start = performance.now();
 
@@ -117,6 +135,7 @@ const App = () => {
   );
 
   const [showfiltersettings, setShowfiltersettings] = useState(false);
+  const [youAreCurrenlyDisplayingNumPins, setYouAreCurrenlyDisplayingNumPins] = useState(0);
 
   function getOneMonthAgo() {
     const today = new Date();
@@ -210,7 +229,7 @@ const App = () => {
       // console.log(updatedParams)
       // console.log(response.data)
       void convertDatafromApitoGeojson(response.data).then(data => setGeojson(data));
-     
+      setYouAreCurrenlyDisplayingNumPins(response.data.length);
       if(updatedParams.author) {
         ifusername( response.data.length, updatedParams.author);         
       } else{
@@ -252,20 +271,33 @@ const App = () => {
     setIsbottomLogoClick(true)
   }  
 
-  // Function to add the wiggle class, triggering the animation
   function triggerWiggle() {
-    const contentElement = document.querySelector('.logo-with-text img') as HTMLDivElement; 
-    if (contentElement) {
-        contentElement.classList.add('wiggle');
-    }
+    const contentElement = document.querySelector('.logo-with-text img');
+    
+    // Check if the element exists
+    if (!contentElement) return;
+    
+    // Remove the class if it exists, forcing a reflow
+    contentElement.classList.remove('wiggle');
+    
+    // Add the class to start the animation
+    contentElement.classList.add('wiggle');
 
+    // Remove the class after the animation duration
     setTimeout(() => {
-      contentElement.classList.remove('wiggle');
-    }, 5000); // Match the duration of the wiggle animation (0.5s)
-  } 
+        contentElement.classList.remove('wiggle');
+    }, 500); // Match the duration of the wiggle animation (0.5s)
+  }
 
-  // Trigger the wiggle function every second
-  setInterval(triggerWiggle, 10000);
+  useEffect(() => {
+      const interval = setInterval(() => {
+          triggerWiggle();
+      }, 10000);
+
+      // Cleanup the interval on component unmount
+      return () => clearInterval(interval);
+  }, []);
+
   //console.log(window.innerWidth)
   const handleCloseBottomLogoClick = () => {
     setIsbottomLogoClick(false);
@@ -285,6 +317,64 @@ const App = () => {
     }
   }, [showUsernameProfile]); // Re-run this effect if showUsernameProfile changes
 
+  const handleGetLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const pos = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+  
+          //poss = {lat: pos.lat, lng: pos.lng};
+          handlePosition(pos)
+  
+          // Update the user location in state
+          setLocation({ location: pos });
+          setDisplaymylocation(true)
+          setMyLocationZoom(16)
+        },
+        () => {
+          console.log("Couldn't access your location");
+        }
+      );
+    } else {
+      // Browser doesn't support Geolocation
+      console.log("Browser doesn't support Geolocation");
+    }
+  }
+
+  // Sad times braught me here I used to live in a seperate file ;(
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Open the tab whenever infowindowData is updated
+  useEffect(() => {
+    if (infowindowData) {
+      setIsOpen(true); // Open the tab when infowindowData is provided
+    }
+  }, [infowindowData]);
+
+  const closeTab = () => {
+    setIsOpen(false);
+  };
+
+
+  const toggleMenu = () => {
+    isMenuOpen = !isMenuOpen;
+    // console.log("isMenuOpen: ", isMenuOpen);
+
+    // Toggle class name based on the state of isMenuOpen
+    const container = document.querySelector('.circle-container, .circle-container-hide');
+    if (container) {
+        if (isMenuOpen) {
+            container.classList.replace('circle-container', 'circle-container-hide');
+        } else {
+            container.classList.replace('circle-container-hide', 'circle-container');
+        }
+    }
+
+  };
+
   return (
     <APIProvider apiKey={API_KEY} version={'beta'}>
         <BrowserRouter>
@@ -298,13 +388,13 @@ const App = () => {
           </Routes>
         </BrowserRouter>
 
-      <div className="LocationPickerContainer">
+      {/* <div className="LocationPickerContainer">
         <PlacePicker
           className="LocationPicker"
           ref={pickerRef}
           forMap="gmap"
-
-          placeholder="Search for a place"
+          // ${'           '.repeat(15)}
+          placeholder={`Search for a place | You are looking at ${youAreCurrenlyDisplayingNumPins} Pins`}
           onPlaceChange={() => {
             if (!pickerRef.current?.value) {
               setLocation(undefined);
@@ -314,60 +404,28 @@ const App = () => {
             }
           }}
         />
-      </div>
+      </div> */}
+      
+      {(!isOpen || !isMobile ) && (
+        <Navbar
+          codeMode={codeMode}
+          onToggleCodeMode={handleClick}
+          onGetLocation={handleGetLocation}
+          showFilterSettings={showfiltersettings}  // Pass the filter visibility state
+          handleFilter={handleFilter}  // Pass the filter function
+          searchParams={searchParams}  // Pass search params if needed
+          setShowfiltersettings={setShowfiltersettings}
+          setLocation={setLocation} 
+          setMyLocationZoom={setMyLocationZoom}
+          numOfPins={youAreCurrenlyDisplayingNumPins}
+          toggleMenuApp={toggleMenu}
+          isMobile = {isMobile}
+        />
+      )}
 
       <div className="logo-with-text">
         <img onClick={handleClickBottomLogo} src={logoWithText} alt="" />
-      </div>
-
-      <div className="button-container">
-        {/* Button to toggle between code mode and browse mode */}
-        <p onClick={handleClick} style={{ cursor: "pointer" }}>
-            {codeMode ? "Browse Map" : "Get Code"}
-        </p>
-        <p
-        id="get-loaction-button"
-        onClick={() => {
-          if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-              (position) => {
-                const pos = {
-                  lat: position.coords.latitude,
-                  lng: position.coords.longitude,
-                };
-
-                //poss = {lat: pos.lat, lng: pos.lng};
-                handlePosition(pos)                
-      
-                // Update the user location in state
-                setLocation({ location: pos });
-                setDisplaymylocation(true)
-                setMyLocationZoom(16)
-              },
-              () => {
-                console.log("Couldn't access your location");
-              }
-            );
-          } else {
-            // Browser doesn't support Geolocation
-            console.log("Browser doesn't support Geolocation");
-          }
-        }}
-        >
-          my location
-        </p>
-        {!codeMode && <p onClick={() => {setShowfiltersettings(true); setInfowindowData(undefined)}}>filter the map</p>}
-        </div>
-        <div className="filter-container">
-
-        {showfiltersettings && <FilterComponent onFilter={handleFilter} searchParams={searchParams}/>}
-
-        {showfiltersettings &&  <div className='filter-close'>
-            <div className="close-btn"><p onClick={() => setShowfiltersettings(false)}>X</p>
-          </div>
-          </div>}
-
-      </div>
+      </div>      
 
       {/* TODO FIX LOADING LOGIC */}
       {fetchingMarkers && <div className="loader-container">
@@ -493,7 +551,25 @@ const App = () => {
           )}
       
           {infowindowData && (
-            <SlidingTab infowindowData={infowindowData.features} />
+            // <SlidingTab infowindowData={infowindowData.features} />
+            <div>
+              {/* Sliding tab */}
+              <div className={`side-tab ${isOpen ? 'open' : ''}`}>
+                {/* Close button inside the tab */}
+                <a href="#" className="close-btn" onClick={closeTab}>×</a>
+
+                {/* Content inside the sliding tab */}
+                <div className="content">
+                  {isOpen ? (
+                    <div>
+                      <InfoWindowContent features={infowindowData.features} />
+                    </div>
+                  ) : (
+                    <p>No data available</p>
+                  )}
+                </div>
+              </div>
+            </div>
           )}
 
           {isbottomLogoClick && (
@@ -502,15 +578,17 @@ const App = () => {
 
           {/* Display the user slidingbar */}
 
-          {showUsernameProfile && (
+          {/* {showUsernameProfile && (
             <SlidingUserTab userInfowindowData={geojson} username={showUsername} pinCount={showUsersNumberOfPins}/>
+          )} */}
+
+          {(showUsernameProfile) && (
+              <SlidingUserTab userInfowindowData={geojson} username={showUsername} pinCount={showUsersNumberOfPins} toggleMenuApp={toggleMenu}/>
           )}
 
         </Map>
       
-        {showUsernameProfile && (
-            <SlidingUserTab userInfowindowData={geojson} username={showUsername} pinCount={showUsersNumberOfPins}/>
-        )}
+        
     </APIProvider>
   );
 };

@@ -23,14 +23,13 @@
   position: fixed;
   bottom: 0;
   width: 100vw;
-  height: 100vh;
+  height: calc(100vh - 60px);
 }
 
 .custom-marker-clustering-map .marker {
   /* Remove custom styles */
   box-sizing: initial; 
 }
-
 
 .custom-marker-clustering-map .marker.cluster {
   width: 3rem; /* Google Maps default cluster size */
@@ -251,102 +250,6 @@
 }
 
 
-
-
-/*Filter */
-
-
-.LocationPickerContainer {
-  position: fixed; /* Updated to fixed as per the old style */
-  top: 20px; /* Adjusted as per old CSS */
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10; /* Ensures it is above the map */
-  display: flex;
-  justify-content: center;
-  align-items: center; /* Added to align items in the center vertically */
-  width: 100%; /* Full width like the old search-box */
-  pointer-events: none; /* Added to prevent interaction with the container */    
-}
-
-.LocationPicker {
-  width: 80%;
-  padding: 0px 0px;
-  border: none;
-  background-color: rgba(255, 255, 255, 0.95);
-  font-family: "Quicksand", sans-serif;
-  font-size: 0.9rem;
-  text-align: center;
-  border-radius: 30px;
-  box-sizing: border-box;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-  opacity: 0.9;
-  pointer-events: all; /* Ensures the input remains interactive */
-}
-
-.button-container {
-  position: fixed;
-  display: flex;
-  z-index: 1;
-  top: 70px;
-  width: 100%;
-  left: 9%;
-  
-
-  a {
-    text-decoration: unset;
-    color: unset;
-  }
-
-    p {
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-family: "Quicksand", sans-serif;
-      margin: 0 8px; /* Adjusted spacing */
-      padding: 6px 12px; /* Adjusted padding for better look */
-      color: #ffffff;
-      font-size: 0.75em; /* Maintain original font size */
-      font-weight: 600; /* Slightly lighter weight */
-      background: linear-gradient(135deg, #333333 0%, #555555 100%); /* Subtle gradient background */
-      border-radius: 8px; /* Slightly rounded corners */
-      transition: background 0.3s, transform 0.2s; /* Smooth transitions */
-    }
-
-    p:hover {
-      cursor: pointer;
-      background: linear-gradient(135deg, #444444 0%, #666666 100%); /* Darker gradient on hover */
-      transform: translateY(-2px); /* Slight lift effect */
-    }
-
-    .filler {
-        flex: 1;
-    }
-
-    .btn {
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-family: "Quicksand", sans-serif;
-    margin: 0 8px; /* Adjusted spacing */
-    padding: 6px 12px; /* Adjusted padding for better look */
-    color: #ffffff;
-    font-size: 0.75em; /* Maintain original font size */
-    font-weight: 600; /* Slightly lighter weight */
-    background: linear-gradient(135deg, #333333 0%, #555555 100%); /* Subtle gradient background */
-    border-radius: 8px; /* Slightly rounded corners */
-    cursor: pointer;
-    text-align: center;
-    transition: background 0.3s, transform 0.2s; /* Smooth transitions */
-    }
-
-    .btn:hover {
-      background: linear-gradient(135deg, #444444 0%, #666666 100%); /* Darker gradient on hover */
-      transform: translateY(-2px); /* Slight lift effect */
-    }
-}
 
 
 /* Styling for the filter button component */
@@ -609,16 +512,15 @@ input:checked+.slider:before {
 }
 
 /*Filter End*/
-
 @media screen and (min-width: 800px) {
   .LocationPicker {
     width: 45%;
   }
 
-  .button-container {
+  /* .button-container {
     width: 100%;
     left: 27.5%;
-  }
+  } */
 
   .filter-container .filter-sec,  .filter-container .filter-close{
       width: 43%; /* Adjust width for larger screens */
@@ -631,4 +533,14 @@ input:checked+.slider:before {
   .code-mode-div {
     width: 45%;
   }
+
+  
+}
+
+@media screen and (max-width: 800px) {
+  .custom-marker-clustering-map {    
+    height: 100vh;
+  }
+
+  
 }

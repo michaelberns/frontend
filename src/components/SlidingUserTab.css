@@ -181,6 +181,7 @@
 
 /* The side tab for larger screens */
 .user-side-tab {
+  margin-top: 60px;
   height: 100%; /* Full height */
   width: 0; /* Start with no width - hidden */
   position: fixed; /* Fixed position */
@@ -192,7 +193,7 @@
   padding-top: 60px; /* Place content 60px from the top */
   transition: width 0.5s; /* Animation for width */
   color: rgb(0, 0, 0); /* Text color */
-  z-index: 1000; /* Ensure it's on top of other content */
+  z-index: 0; /* Ensure it's on top of other content */
 }
 
 /* Content inside the tab */
@@ -241,6 +242,7 @@ button {
     height: 75%; /* Expand to 50% of the screen height */
     width: 95%; /* Keep 95% width */
     visibility: visible;
+    z-index: 0;
   }
 
   .user-side-tab .content {
@@ -260,8 +262,6 @@ button {
   .pin-count {
     margin-left: 0px;
     margin-right: 100%;
-    min-width: 60px;
-    max-width: 60px;
     font-size: 15px;
   }
 
@@ -277,10 +277,20 @@ button {
   touch-action: none; /* Prevent touch scrolling on mobile devices */
 }
 
-.circle-container {
+.circle-container {  
+  margin-top: 60px;
   position: fixed;
   top:-75px;
   left: -75px;
+  display: block;
+}
+
+.circle-container-hide {  
+  margin-top: 60px;
+  position: fixed;
+  top:-75px;
+  left: -75px;
+  display: none;
 }
 
 .circle {
@@ -302,6 +312,7 @@ button {
 
 /* Minimized profile picture styling */
 .minimized-profile {
+  margin-top: 60px;
   display: flex;
   align-items: center;
   gap: 2px;
@@ -336,4 +347,20 @@ button {
 .minimized-profile-picture:hover {
   transform: rotate(5deg) scale(1.1); /* Slight rotation and scale effect on hover */
   box-shadow: 0 0 10px rgba(0, 123, 255, 0.5); /* Adds a glow effect around the profile picture */
+}
+
+
+@media screen and (max-width: 800px) {
+
+  .minimized-profile {
+    margin-top: 0;
+  }
+
+  .circle-container {  
+    margin-top: 0;
+  }
+
+  .user-side-tab {
+    margin-top: 0;
+  }
 }

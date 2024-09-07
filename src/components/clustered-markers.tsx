@@ -39,13 +39,11 @@ export const ClusteredMarkers = ({
       setNumClusters(clusters.length);
   }, [setNumClusters, clusters.length]);
 
-  const handleClusterClick = useCallback(
-    (marker: google.maps.marker.AdvancedMarkerElement, clusterId: number) => {
+  const handleClusterClick = useCallback((marker: google.maps.marker.AdvancedMarkerElement, clusterId: number) => {
       const leaves = getLeaves(clusterId);
 
       setInfowindowData({anchor: marker, features: leaves});
-    },
-    [getLeaves, setInfowindowData]
+    },[getLeaves, setInfowindowData]
   );
 
   const handleMarkerClick = useCallback(

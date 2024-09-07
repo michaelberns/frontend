@@ -14,7 +14,7 @@ const max = 1;
 const usernameArray = [
   { username: 'detlev', description: 'Management' },
   { username: 'arcange', description: 'DevOps' },
-  { username: 'lizanomadsoul', description: 'Curation' },
+  { username: 'lizanomadsoul', description: 'Communication & Curation' },
   { username: 'louis88', description: 'Graphic Design' },
   { username: 'rivalzzz', description: 'Communication' },
   { username: 'godfish', description: 'Community' },
@@ -223,6 +223,7 @@ const BottomLogoClick = ({ onClose, onfetch, fetchdone}) => {
         <div className="team-stats-container">
           <div className="left-section-team">            
               <h2>WorldMapPin Stats</h2>
+                <div className='overflowleft'>
                   <div className="total-pins-display">
                     <span>Total Pin Num.: </span>
                     <span> {totalNumberOfPins}</span>
@@ -243,9 +244,10 @@ const BottomLogoClick = ({ onClose, onfetch, fetchdone}) => {
                     ))}
                   </ul>
                 </div>
-                <div style={{ marginTop: '30px'}} >
+                <div style={{ marginTop: '30px', marginRight: '20px', marginBottom: '20px'}} >
                   <LineGraph results={results} />
-                </div>          
+                </div>  
+              </div>
           </div>
           <div className="middle"></div>
           <div className="right-section">
@@ -254,7 +256,7 @@ const BottomLogoClick = ({ onClose, onfetch, fetchdone}) => {
               {userProfiles.map((profile, index) => (
                 <a
                   key={index}
-                  href={`https://hive.blog/@${profile.username}`}
+                  href={`https://peakd.com/@${profile.username}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="username-link"
