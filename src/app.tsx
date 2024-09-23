@@ -419,7 +419,7 @@ const App = () => {
           setMyLocationZoom={setMyLocationZoom}
           numOfPins={youAreCurrenlyDisplayingNumPins}
           toggleMenuApp={toggleMenu}
-          isMobile = {isMobile}
+          isMobile={isMobile}
         />
       )}
 
@@ -440,9 +440,9 @@ const App = () => {
           onTilesLoaded={handleTilesLoaded}          
           mapId={'edce5dcfb5575af1'}
           defaultCenter={{ lat: 50, lng: 20 }}
-          defaultZoom={4}
-          minZoom={4}
-          maxZoom={15}
+          defaultZoom={1}
+          minZoom={1}
+          maxZoom={20}
           zoomControl={true}
           gestureHandling={'greedy'}
           disableDefaultUI={true}
@@ -583,7 +583,7 @@ const App = () => {
           )} */}
 
           {(showUsernameProfile) && (
-              <SlidingUserTab userInfowindowData={geojson} username={showUsername} pinCount={showUsersNumberOfPins} toggleMenuApp={toggleMenu}/>
+              <SlidingUserTab userInfowindowData={geojson} username={showUsername.toLowerCase()} pinCount={showUsersNumberOfPins} toggleMenuApp={toggleMenu} isMobile={isMobile}/>
           )}
 
         </Map>

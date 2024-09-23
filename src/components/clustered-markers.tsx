@@ -5,6 +5,12 @@ import {FeatureMarker} from './feature-marker';
 import {useSupercluster} from '../hooks/use-supercluster';
 import {Feature, FeatureCollection, GeoJsonProperties, Point} from 'geojson';
 
+var minZoom = 3;
+
+if (window.innerWidth < 800) {
+  console.log("yes I can do this")
+  var minZoom = 2;
+}
 
 type ClusteredMarkersProps = {
   geojson: FeatureCollection<Point>;
@@ -23,8 +29,8 @@ const superclusterOptions: Supercluster.Options<
 > = {
   extent: 256,
   radius: 60,
-  maxZoom: 16,
-  minZoom: 4
+  maxZoom: 18,
+  minZoom: minZoom
 };
 
 export const ClusteredMarkers = ({

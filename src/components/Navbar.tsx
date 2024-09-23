@@ -28,13 +28,11 @@ const Navbar = ({
 
   const toggleMenu = () => {
     setMenuOpen(!isMenuOpen2);
-    // if(!isMobile){toggleMenuApp();} // Potentially a buf
     toggleMenuApp();
   };
 
   if(!isMenuOpen && isMenuOpen2) {
     toggleMenu();
-    // if(!isMobile){toggleMenuApp();}
     toggleMenuApp();
   }
 

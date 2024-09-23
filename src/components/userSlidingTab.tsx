@@ -18,7 +18,7 @@ const max = 1; // Maximum number of accounts to return
 var onlyCallApiTwice = 2; // Not sure why only calling it once doesn't work
 var usernamedifferent = "";
 
-function SlidingUserTab({ userInfowindowData, username, pinCount, toggleMenuApp }) {
+function SlidingUserTab({ userInfowindowData, username, pinCount, toggleMenuApp, isMobile }) {
 
   async function initializeNode(){
     node = await initializeClient();  // Assume this function correctly initializes the client
@@ -78,7 +78,7 @@ function SlidingUserTab({ userInfowindowData, username, pinCount, toggleMenuApp 
 
   useEffect(() => {
     if(usernamedifferent !== username) {
-      toggleMenuApp();
+      if(isMobile){toggleMenuApp();}
       onlyCallApiTwice = 2;
     }
 

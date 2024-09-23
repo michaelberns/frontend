@@ -15,11 +15,13 @@ const usernameArray = [
   { username: 'detlev', description: 'Management' },
   { username: 'arcange', description: 'DevOps' },
   { username: 'lizanomadsoul', description: 'Communication & Curation' },
+  { username: 'ninaeatshere', description: 'Communication & Curation' },
   { username: 'louis88', description: 'Graphic Design' },
   { username: 'rivalzzz', description: 'Communication' },
   { username: 'godfish', description: 'Community' },
   { username: 'masterswatch', description: 'Frontend' },
   { username: 'uniforced', description: 'Frontend' },
+  { username: 'sunsea', description: 'Enduser Testing' },
   { username: 'ybanezkim26', description: 'Curation' },
   { username: 'lauramica', description: 'Curation' },
   { username: 'glecerioberto', description: 'Curation' }
