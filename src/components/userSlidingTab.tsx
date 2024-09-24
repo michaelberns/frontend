@@ -27,7 +27,6 @@ function SlidingUserTab({ userInfowindowData, username, pinCount, toggleMenuApp,
       handleUsernameSubmit(username);
     }
   }
-  
 
   const [isOpen, setIsOpen] = useState(false);
   const [profilePic, setProfilePic] = useState('path/to/default-profile-picture.png');
@@ -72,7 +71,7 @@ function SlidingUserTab({ userInfowindowData, username, pinCount, toggleMenuApp,
       }
     } catch (error) {
       console.error('Error fetching accounts:', error);
-      userNotFound();
+      userNotFound();      
     }
   };  
 
@@ -88,9 +87,10 @@ function SlidingUserTab({ userInfowindowData, username, pinCount, toggleMenuApp,
       usernamedifferent = username;
       setIsMinimized(true); 
     }
-  })
+  })  
 
   const userNotFound = () => {
+
     setProfilePic(mappinLogo);
     setProfileDetails({
       name: 'Username not found',
@@ -98,6 +98,9 @@ function SlidingUserTab({ userInfowindowData, username, pinCount, toggleMenuApp,
       location: '',
       website: '',
     });
+
+    // Redirect to the homepage - this is an upleasant re-route
+    window.location.href = "/username-not-found";
   }
 
   // Open the tab whenever infowindowData is updated
@@ -124,6 +127,10 @@ function SlidingUserTab({ userInfowindowData, username, pinCount, toggleMenuApp,
     <div>
       {/* Sliding tab */}
       <div ref={userSideTabRef} className={`user-side-tab ${isOpen ? 'open' : ''}`}>
+        {/* Close button inside the tab */}
+        <a href="javascript:void(0);" className="close-btn" onClick={closeTab}>
+          ×
+        </a>
         <div className="content">
           {/* User information */}
           <div className="profile-content">
@@ -150,10 +157,7 @@ function SlidingUserTab({ userInfowindowData, username, pinCount, toggleMenuApp,
             )}
           </div>
 
-          {/* Close button inside the tab */}
-          <a href="#" className="close-btn" onClick={closeTab}>
-            ×
-          </a>
+          
 
           {/* Content inside the sliding tab */}
           {isOpen ? (

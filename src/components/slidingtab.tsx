@@ -21,7 +21,7 @@ function SlidingTab({ infowindowData, username, pinCount }) {
       {/* Sliding tab */}
       <div className={`side-tab ${isOpen ? 'open' : ''}`}>
         {/* Close button inside the tab */}
-        <a href="#" className="close-btn" onClick={closeTab}>×</a>
+        <a href="javascript:void(0);" className="close-btn" onClick={closeTab}>×</a>
 
         {/* Content inside the sliding tab */}
         <div className="content">

@@ -9,7 +9,7 @@ const PostSummary = (props) => {
 
   const handleImageError = () => {
     setIsImageError(true);
-  };
+  };  
 
   return (
     <div className={"post-summary"}>
@@ -62,7 +62,7 @@ export const InfoWindowContent = memo(({ features }) => {
         const response = await axios.post("https://worldmappin.com/api/marker/ids", {
           marker_ids: featureIds,
         });
-        setSelectedFeatures(response.data); // Assume response.data is an array of markers
+        setSelectedFeatures(response.data);
         // console.log(response.data)
       } catch (err) {
         setError(err.message);

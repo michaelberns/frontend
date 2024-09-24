@@ -379,11 +379,10 @@ const App = () => {
     <APIProvider apiKey={API_KEY} version={'beta'}>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={null}>
+            <Route path="/" element={null} />
             <Route path="p/:permlink" element={null} />
             <Route path="t/:tag" element={null} />
-            <Route path="*" element={null} /> {/*TODO Add PAGE NOT FOUND*/}
-            </Route>
+            <Route path="*" element={null} /> {/*TODO Add PAGE NOT FOUND*/}            
             <Route path="/:username" element={<YourComponent />} />
           </Routes>
         </BrowserRouter>
@@ -556,7 +555,7 @@ const App = () => {
               {/* Sliding tab */}
               <div className={`side-tab ${isOpen ? 'open' : ''}`}>
                 {/* Close button inside the tab */}
-                <a href="#" className="close-btn" onClick={closeTab}>×</a>
+                <a href="javascript:void(0);" className="close-btn" onClick={closeTab}>×</a>
 
                 {/* Content inside the sliding tab */}
                 <div className="content">

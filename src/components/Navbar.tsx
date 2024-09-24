@@ -47,9 +47,11 @@ const Navbar = ({
 
         <div className="LocationPickerContainer">
             <div className="search-bar-wrapper">
-                <div className="logo-png" >
-                    <img src={LogoPng} alt="" width={150} style={{ height: 'auto' }} />
-                </div>
+                <a href="/">
+                  <div className="logo-png" >
+                      <img src={LogoPng} alt="" width={150} style={{ height: 'auto' }} />
+                  </div>
+                </a>
             </div>
 
             <div className="search-bar-wrapper2">

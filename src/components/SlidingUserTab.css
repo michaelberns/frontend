@@ -189,7 +189,7 @@
   left: 0; /* Slide in from the left */
   background-color: rgba(255, 255, 255, 0.86);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-  overflow-x: hidden; /* Disable horizontal scroll */
+  /*overflow-x: hidden;  Disable horizontal scroll */
   padding-top: 60px; /* Place content 60px from the top */
   transition: width 0.5s; /* Animation for width */
   color: rgb(0, 0, 0); /* Text color */
@@ -199,6 +199,9 @@
 /* Content inside the tab */
 .user-side-tab .content {
   margin-left: 5px;
+  margin-right: 0px;
+  max-height: calc(100% - 50px);
+  overflow-y: auto; /* Enables scrolling */
 }
 
 /* Close button */

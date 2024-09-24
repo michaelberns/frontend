@@ -5,10 +5,9 @@ import {FeatureMarker} from './feature-marker';
 import {useSupercluster} from '../hooks/use-supercluster';
 import {Feature, FeatureCollection, GeoJsonProperties, Point} from 'geojson';
 
-var minZoom = 3;
+var minZoom = 2;
 
-if (window.innerWidth < 800) {
-  console.log("yes I can do this")
+if (window.innerWidth < 800) {  
   var minZoom = 2;
 }
 

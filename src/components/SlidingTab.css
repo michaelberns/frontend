@@ -7,8 +7,8 @@
   right: 0; /* Slide in from the right */
   background-color: rgba(255, 255, 255, 0.86);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-  overflow-x: hidden; /* Disable horizontal scroll */
-  padding-top: 60px; /* Place content 60px from the top */
+  /* overflow-x: hidden; */
+  padding-top: 30px; /* Place content 60px from the top */
   transition: 0.5s; /* Animation */
   color: rgb(0, 0, 0); /* Text color */
   z-index: 10000; /* Ensure it's on top of other content */
@@ -17,6 +17,9 @@
 /* Content inside the tab */
 .side-tab .content {
   margin: 25px;
+  margin-right: 0px;
+  max-height: calc(100% - 50px);
+  overflow-y: auto; /* Enables scrolling */
 }
 
 /* Close button */
@@ -116,6 +119,7 @@ button {
       }
 
       .extra-info {
+          margin-right: 5px;
           display: flex;
           font-size: 12px;
           flex: 1;
