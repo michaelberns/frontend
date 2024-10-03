@@ -14,9 +14,9 @@ const max = 1;
 const usernameArray = [
   { username: 'detlev', description: 'Management' },
   { username: 'arcange', description: 'DevOps' },
-  { username: 'lizanomadsoul', description: 'Communication & Curation' },
+  { username: 'lizanomadsoul', description: 'Management, Curation & Communication' },
   { username: 'ninaeatshere', description: 'Communication & Curation' },
-  { username: 'louis88', description: 'Graphic Design' },
+  { username: 'louis88', description: 'Graphic Design, Testing & Communication' },
   { username: 'rivalzzz', description: 'Communication' },
   { username: 'godfish', description: 'Community' },
   { username: 'masterswatch', description: 'Frontend' },

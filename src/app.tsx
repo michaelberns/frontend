@@ -183,9 +183,9 @@ const App = () => {
     if(!loadedonce){
       if(!firstLoad){loadmarkersonfirstLoad();}
       setFetchingMarkers(true)
-      loadedonce = true;
+      loadedonce = true;      
     }
-  }, [loadedonce, firstLoad]);
+  }, [loadedonce, firstLoad, setLocation]);
 
   async function loadmarkersonfirstLoad() {
 
@@ -292,6 +292,7 @@ const App = () => {
   useEffect(() => {
       const interval = setInterval(() => {
           triggerWiggle();
+
       }, 10000);
 
       // Cleanup the interval on component unmount
@@ -330,7 +331,7 @@ const App = () => {
           handlePosition(pos)
   
           // Update the user location in state
-          setLocation({ location: pos });
+          setLocation({ location: pos }); 
           setDisplaymylocation(true)
           setMyLocationZoom(16)
         },

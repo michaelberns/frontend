@@ -6,7 +6,7 @@
     justify-content: space-around;
     align-items: center;
     background-color: #ffffff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    box-shadow: -3px -6px 7px 5px #0006;
     z-index: 1000;
   }
 
@@ -216,9 +216,7 @@
   }
   
   .button-container2 {
-    display: flex;
-    display: contents;
-  
+    overflow: hidden;
   
     a {
       text-decoration: unset;
@@ -319,6 +317,7 @@
     }
   
     .button-container2 {
+      overflow: hidden;
       width: 100%;
       display: flex;
   

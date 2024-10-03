@@ -38,8 +38,8 @@ export const ClusteredMarkers = ({
   setInfowindowData,
 }: ClusteredMarkersProps) => {
   const {clusters, getLeaves} = useSupercluster(geojson, superclusterOptions);
+  const [firstLoad , setFirstLoad] = useState(false);
 
-  
   useEffect(() => {
       setNumClusters(clusters.length);
   }, [setNumClusters, clusters.length]);
@@ -62,7 +62,15 @@ export const ClusteredMarkers = ({
     [clusters, setInfowindowData]
   );
 
+  useEffect(() => {
+    if(!firstLoad){
+      minZoom = 1;
+      setFirstLoad(true);
+    }
 
+  },[firstLoad, setFirstLoad])
+
+  
   
   return (
     <>

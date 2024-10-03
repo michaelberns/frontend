@@ -7,6 +7,22 @@ import './navbar.css';
 
 import { isMenuOpen } from '../app'
 
+function calculateZoomLevel(bounds, types) {
+  const GLOBE_WIDTH = 256;
+  let angle = bounds.ne.lng - bounds.sw.lng;
+
+  if(types.includes("establishment")){
+    const zoomMax = 20;
+    return zoomMax;
+  }
+
+  if (angle < 0) {
+      angle += 360;
+  }
+  const zoomMax = Math.round(Math.log(960 * 360 / angle / GLOBE_WIDTH) / Math.LN2);
+  return zoomMax;
+}
+
 const Navbar = ({
     codeMode,
     onToggleCodeMode,
@@ -64,10 +80,23 @@ const Navbar = ({
                     if (!pickerRef.current?.value) {
                         setLocation(undefined);
                     } else {
-                        setLocation(pickerRef.current?.value);
-                        setMyLocationZoom(9);
+                        setLocation(pickerRef.current?.value);                        
+                        console.log(pickerRef.current?.value.viewport); // Here we get the bounds
+                        let types = pickerRef.current?.value.types;
+
+                        let viewport = pickerRef.current?.value.viewport;
+
+                        // Translating your received object into the expected format:
+                        let bounds = {
+                            ne: { lat: viewport.Jh.hi, lng: viewport.ji.hi },
+                            sw: { lat: viewport.Jh.lo, lng: viewport.ji.lo }
+                        };
+
+                        const zoomLevel = calculateZoomLevel(bounds, types);    
+                        console.log(zoomLevel);             
+                        setMyLocationZoom(zoomLevel); // zoom level should be dynamically set depending on the bounds
                     }
-                    }}
+                  }}
                 />
 
                 <div className="button-container">
@@ -120,18 +149,30 @@ const Navbar = ({
         <div className="mobile-menu">
 
           <div className="LocationPickerContainer2">
-            <PlacePicker
-              className="LocationPicker2"
-              ref={pickerRef}
-              forMap="gmap"
-
-              placeholder={`Search place | Viewing: ${numOfPins} Pins`}
-              onPlaceChange={() => {
+              <PlacePicker
+                className="LocationPicker2"
+                ref={pickerRef}
+                forMap="gmap"
+                placeholder={`Search place | Viewing: ${numOfPins} Pins`}
+                onPlaceChange={() => {
                 if (!pickerRef.current?.value) {
-                  setLocation(undefined);
+                    setLocation(undefined);
                 } else {
-                  setLocation(pickerRef.current?.value);
-                  setMyLocationZoom(9);
+                    setLocation(pickerRef.current?.value);                        
+                    console.log(pickerRef.current?.value.viewport); // Here we get the bounds
+                    let types = pickerRef.current?.value.types;
+
+                    let viewport = pickerRef.current?.value.viewport;
+
+                    // Translating your received object into the expected format:
+                    let bounds = {
+                        ne: { lat: viewport.Jh.hi, lng: viewport.ji.hi },
+                        sw: { lat: viewport.Jh.lo, lng: viewport.ji.lo }
+                    };
+
+                    const zoomLevel = calculateZoomLevel(bounds, types);    
+                    console.log(zoomLevel);             
+                    setMyLocationZoom(zoomLevel); // zoom level should be dynamically set depending on the bounds
                 }
               }}
             />
