@@ -178,16 +178,9 @@
     /* Adjusted as per old CSS */
     left: 50%;
     transform: translateX(-50%);
-    z-index: 1;
-    /* Ensures it is above the map */
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    z-index: 1;    
     /* Added to align items in the center vertically */
-    width: 100%;
-    /* Full width like the old search-box */
-    pointer-events: none;
-    /* Added to prevent interaction with the container */
+    width: 100%;    
   }
   
   .LocationPicker2 {
@@ -321,9 +314,8 @@
       width: 100%;
       display: flex;
   
-      padding-top: 30px;
-  
       p {
+        margin-top: 5px;
         margin-right: 6px;
       }
   

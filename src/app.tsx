@@ -80,6 +80,9 @@ const App = () => {
   let usernameProvided = false;
   var usernamep = '';
 
+  let permlinkProvided = false;
+  var permlinkP = '';
+
   const [showUsername, setShowUsername] = useState('');
   const [showUsersNumberOfPins, setShowUsersNumberOfPins] = useState(0);
 
@@ -95,18 +98,18 @@ const App = () => {
     }  
   })
 
-  if (!performanceTest){
-    const start = performance.now();
+  // if (!performanceTest){
+  //   const start = performance.now();
 
-    for (let i = 0; i < 1e7; i++) {} // Arbitrary task for benchmarking
-    const end = performance.now();
-    console.log(`Time taken: ${end - start}ms`);
-    if (end - start > 100) {
-        console.log('This might be a low-end device based on execution time.');
-        setLowEndDevice(true)
-    }
-    setPerformanceTest(true);
-  }
+  //   for (let i = 0; i < 1e7; i++) {} // Arbitrary task for benchmarking
+  //   const end = performance.now();
+  //   console.log(`Time taken: ${end - start}ms`);
+  //   if (end - start > 100) {
+  //       console.log('This might be a low-end device based on execution time.');
+  //       setLowEndDevice(true)
+  //   }
+  //   setPerformanceTest(true);
+  // }
   
   //Variables for api markers
   var loadedonce = false;
@@ -134,6 +137,25 @@ const App = () => {
     params?.username ? { author: params.username } : (params?.permlink ? { permlink: params.permlink } : (params?.tag ? { tags: [params?.tag] } : { curated_only: false }))
   );
 
+  function PermLink() {
+    const { permlink } = useParams();    
+    
+    if (permlink && fetchingMarkers) {
+      console.log(permlink);
+      permlinkProvided = true;
+      permlinkP = permlink;
+      // useEffect(() => { 
+      //   setShowUsername(usernamep);
+      //   setShowUsernameProfile(true)
+      // });
+    } else {
+      usernameProvided = false;
+    }
+    return null
+
+
+  }
+
   const [showfiltersettings, setShowfiltersettings] = useState(false);
   const [youAreCurrenlyDisplayingNumPins, setYouAreCurrenlyDisplayingNumPins] = useState(0);
 
@@ -155,7 +177,7 @@ const App = () => {
       post_title: filterData ? filterData.postTitle : '',
       start_date: lowEndDevice ? oneMonthAgo : filterData ? filterData.startDate : '',
       end_date: filterData ? filterData.endDate : '',
-      permlink: '',
+      permlink: permlinkProvided ? permlinkP : '',
       curated_only: filterData ? filterData.isCurated : false
     });
     setLowEndDevice(false); // This is to make the filter work for the user (even though they probably won't be able to fetch 100k pins)
@@ -378,15 +400,15 @@ const App = () => {
 
   return (
     <APIProvider apiKey={API_KEY} version={'beta'}>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={null} />
-            <Route path="p/:permlink" element={null} />
-            <Route path="t/:tag" element={null} />
-            <Route path="*" element={null} /> {/*TODO Add PAGE NOT FOUND*/}            
-            <Route path="/:username" element={<YourComponent />} />
-          </Routes>
-        </BrowserRouter>
+      <BrowserRouter>
+        <Routes>
+          {/* <Route path="/" element={null} /> */}
+          <Route path="t/:tag" element={null} />                  
+          <Route path="/:username" element={<YourComponent />} />
+          <Route path="p/:permlink" element={<PermLink />} />
+          <Route path="*" element={null} /> {/*TODO Add PAGE NOT FOUND*/}
+        </Routes>
+      </BrowserRouter>
 
       {/* <div className="LocationPickerContainer">
         <PlacePicker
@@ -543,8 +565,7 @@ const App = () => {
             position={{ lat: poss.lat, lng: poss.lng }}            
             options = {{ scale: 0.3 }}
           ><img src={locationpng} width={32} height={32} /></AdvancedMarker>
-          }
-          
+          }          
 
           {codeMode && codeModeMarker && (
             <AdvancedMarker position={{ lat: codeModeMarker.lat, lng: codeModeMarker.lng }} />
@@ -600,7 +621,7 @@ export function renderToDom(container: HTMLElement) {
   const root = createRoot(container);
 
   root.render(
-    <React.StrictMode>
+    <React.StrictMode>      
       <App />
     </React.StrictMode>
   );

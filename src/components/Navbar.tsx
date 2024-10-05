@@ -176,16 +176,17 @@ const Navbar = ({
                 }
               }}
             />
-          </div>
+          
 
-          <div className="button-container2">
-            <p onClick={() => {  onToggleCodeMode();}} style={{ cursor: "pointer" }}>
-              {codeMode ? "Browse Map" : "Get Code"}
-            </p>
-            <p id="get-location-button" onClick={onGetLocation}>
-              My Location
-            </p>
-            {!codeMode && <p onClick={() => { setShowfiltersettings(true); }}>filter the map</p>}
+            <div className="button-container2">
+              <p onClick={() => {  onToggleCodeMode();}} style={{ cursor: "pointer" }}>
+                {codeMode ? "Browse Map" : "Get Code"}
+              </p>
+              <p id="get-location-button" onClick={onGetLocation}>
+                My Location
+              </p>
+              {!codeMode && <p onClick={() => { setShowfiltersettings(true); }}>filter the map</p>}
+            </div>
           </div>
 
           {/* Filter container UI logic */}

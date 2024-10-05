@@ -23,7 +23,7 @@ export function useSupercluster<T extends GeoJsonProperties>(
   }, [clusterer, geojson]);
 
   // get bounding-box and zoomlevel from the map
-  const {bbox, zoom} = useMapViewport({padding: 100});
+  const {bbox, zoom} = useMapViewport({padding: 90});
 
   // retrieve the clusters within the current viewport
   const clusters = useMemo(() => {
