@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import FilterComponent from './FilterComponent';
 import { PlacePicker } from '@googlemaps/extended-component-library/react';
 import { PlacePicker as TPlacePicker } from '@googlemaps/extended-component-library/place_picker.js';
@@ -86,17 +86,16 @@ const Navbar = ({
 
                         let viewport = pickerRef.current?.value.viewport;
 
-                        // Translating your received object into the expected format:
                         let bounds = {
-                            ne: { lat: viewport.Jh.hi, lng: viewport.ji.hi },
-                            sw: { lat: viewport.Jh.lo, lng: viewport.ji.lo }
-                        };
+                          ne: { lat: Object.values(viewport)[0].hi, lng: Object.values(viewport)[1].hi },
+                          sw: { lat: Object.values(viewport)[0].lo, lng: Object.values(viewport)[1].lo }
+                        };    
 
-                        const zoomLevel = calculateZoomLevel(bounds, types);    
-                        console.log(zoomLevel);             
-                        setMyLocationZoom(zoomLevel); // zoom level should be dynamically set depending on the bounds
+                        const zoomLevel = calculateZoomLevel(bounds, types);        
+                        setMyLocationZoom(zoomLevel);
                     }
                   }}
+                  //onKeyDown={handleKeyPress}
                 />
 
                 <div className="button-container">
@@ -163,16 +162,14 @@ const Navbar = ({
                     let types = pickerRef.current?.value.types;
 
                     let viewport = pickerRef.current?.value.viewport;
-
-                    // Translating your received object into the expected format:
+                    
                     let bounds = {
-                        ne: { lat: viewport.Jh.hi, lng: viewport.ji.hi },
-                        sw: { lat: viewport.Jh.lo, lng: viewport.ji.lo }
+                      ne: { lat: Object.values(viewport)[0].hi, lng: Object.values(viewport)[1].hi },
+                      sw: { lat: Object.values(viewport)[0].lo, lng: Object.values(viewport)[1].lo }
                     };
 
-                    const zoomLevel = calculateZoomLevel(bounds, types);    
-                    console.log(zoomLevel);             
-                    setMyLocationZoom(zoomLevel); // zoom level should be dynamically set depending on the bounds
+                    const zoomLevel = calculateZoomLevel(bounds, types);
+                    setMyLocationZoom(zoomLevel);
                 }
               }}
             />
