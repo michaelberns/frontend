@@ -32,12 +32,72 @@ import './components/SlidingUserTab.css';
 //Navbar
 import Navbar from './components/Navbar';
 
+//Map Styles Controls
+import ControlPanel from './components/mapStyles';
+
+//Leaderboard
+import Leaderboards from './components/Leaderboards'
+
 export let setGlobalLocation: (location: google.maps.places.Place | undefined) => void;
 export let setGlobalZoom: (zoom: number | undefined) => void;
 export let mapZoom = 3;
 export let isMenuOpen = false;
 
 const API_KEY = (process.env.GOOGLE_MAPS_API_KEY as string) ?? globalThis.GOOGLE_MAPS_API_KEY;
+
+const MapTypeId = {
+  HYBRID: 'hybrid',
+  ROADMAP: 'roadmap',
+  SATELLITE: 'satellite',
+  TERRAIN: 'terrain'
+};
+
+export type MapConfig = {
+id: string;
+label: string;
+mapId?: string;
+mapTypeId?: string;
+styles?: google.maps.MapTypeStyle[];
+};
+
+const MAP_CONFIGS: MapConfig[] = [
+  {
+    id: 'light',
+    label: 'Light',
+    mapId: 'edce5dcfb5575af1',
+    mapTypeId: MapTypeId.ROADMAP
+  },
+  {
+    id: 'dark',
+    label: 'Dark',
+    mapId: '43f81235d4f33346',
+    mapTypeId: MapTypeId.ROADMAP
+  },
+  {
+    id: 'blackandwhite',
+    label: 'Black / White',
+    mapId: '739af084373f96fe',
+    mapTypeId: MapTypeId.ROADMAP
+  },
+  {
+    id: 'satellite',
+    label: 'Satellite',
+    mapId: 'edce5dcfb5575af1',
+    mapTypeId: MapTypeId.SATELLITE
+  },
+  {
+    id: 'hybrid',
+    label: 'Hybrid',
+    mapId: 'edce5dcfb5575af1',
+    mapTypeId: MapTypeId.HYBRID
+  },
+  {
+    id: 'terrain',
+    label: 'Terrain',
+    mapId: 'edce5dcfb5575af1',
+    mapTypeId: MapTypeId.TERRAIN
+  }
+];
 
 const App = () => {
   const [geojson, setGeojson] = useState(null);
@@ -71,6 +131,7 @@ const App = () => {
   const [loading, setLoading] = useState(true);
 
   const [fetchingMarkers, setFetchingMarkers] = useState(true);
+  const [fetchingStats, setFetchingStats] = useState(false);
 
   const [performanceTest , setPerformanceTest] = useState(false);
   const [lowEndDevice , setLowEndDevice] = useState(false);
@@ -90,6 +151,9 @@ const App = () => {
 
   const [isMobile, setIsMobile] = useState(false);
 
+  //Map Styles
+  const [mapConfig, setMapConfig] = useState<MapConfig>(MAP_CONFIGS[0]);
+
   useEffect(() => {
     if (window.innerWidth < 800) {
       setIsMobile(true);
@@ -98,20 +162,7 @@ const App = () => {
     }  
   })
 
-  // if (!performanceTest){
-  //   const start = performance.now();
-
-  //   for (let i = 0; i < 1e7; i++) {} // Arbitrary task for benchmarking
-  //   const end = performance.now();
-  //   console.log(`Time taken: ${end - start}ms`);
-  //   if (end - start > 100) {
-  //       console.log('This might be a low-end device based on execution time.');
-  //       setLowEndDevice(true)
-  //   }
-  //   setPerformanceTest(true);
-  // }
   
-  //Variables for api markers
   var loadedonce = false;
   const [firstLoad , setFirstLoad] = useState(false);
   
@@ -141,15 +192,10 @@ const App = () => {
     const { permlink } = useParams();    
     
     if (permlink && fetchingMarkers) {
-      console.log(permlink);
       permlinkProvided = true;
-      permlinkP = permlink;
-      // useEffect(() => { 
-      //   setShowUsername(usernamep);
-      //   setShowUsernameProfile(true)
-      // });
+      permlinkP = permlink;      
     } else {
-      usernameProvided = false;
+      permlinkProvided = false;
     }
     return null
 
@@ -169,7 +215,7 @@ const App = () => {
     setFetchingMarkers(true)
     const oneMonthAgo = getOneMonthAgo();
 
-    console.log(usernameProvided)
+    // console.log(usernameProvided)
 
     newSearchParams({
       tags: filterData && filterData.tags && filterData.tags.length && filterData.tags[0] ? filterData.tags : [],
@@ -186,7 +232,7 @@ const App = () => {
   
   //Setting the loading state to false when map tiles loaded
   const handleTilesLoaded = () => {
-    setFetchingMarkers(false); // Set loading to false when tiles are loaded
+    // setFetchingMarkers(false); // Set loading to false when tiles are loaded
   };
   
   //Handelsclick on Get Code Browser mode
@@ -218,7 +264,6 @@ const App = () => {
     } catch (err) {
         console.error('Error fetching feature data:', err);
     } finally {
-      setFetchingMarkers(false)
       setFirstLoad(true)      
     }
   }
@@ -258,10 +303,23 @@ const App = () => {
         setShowUsernameProfile(false)
       }
 
+      if(updatedParams.permlink){
+        const pos = {
+          lat: response.data[0].lattitude,
+          lng: response.data[0].longitude,
+        };
+        
+        handlePosition(pos)
+
+        // Update the user location in state
+        setLocation({ location: pos });
+        setMyLocationZoom(12);
+      }
+
     } catch (err) {
         console.error('Error fetching feature data:', err);
     } finally {
-      setFetchingMarkers(false)
+      setTimeout(() => setFetchingMarkers(false), 100);
     }
   }
 
@@ -286,7 +344,7 @@ const App = () => {
       lng: pos.lng,
     });
     
-    console.log("Position set to:", poss);
+    // console.log("Position set to:", poss);
   }
 
   const handleClickBottomLogo = () => {
@@ -327,11 +385,13 @@ const App = () => {
   };
 
   function handleteaminfofetch() {
-    setFetchingMarkers(true)
+    // setFetchingMarkers(true)
+    setFetchingStats(true)
   };
 
   function handleteaminfofetchdone() {
-    setFetchingMarkers(false)
+    // setFetchingMarkers(false)
+    setFetchingStats(false)
   }
 
   useEffect(() => {
@@ -384,7 +444,6 @@ const App = () => {
 
   const toggleMenu = () => {
     isMenuOpen = !isMenuOpen;
-    // console.log("isMenuOpen: ", isMenuOpen);
 
     // Toggle class name based on the state of isMenuOpen
     const container = document.querySelector('.circle-container, .circle-container-hide');
@@ -395,7 +454,6 @@ const App = () => {
             container.classList.replace('circle-container-hide', 'circle-container');
         }
     }
-
   };
 
   return (
@@ -442,14 +500,18 @@ const App = () => {
           numOfPins={youAreCurrenlyDisplayingNumPins}
           toggleMenuApp={toggleMenu}
           isMobile={isMobile}
+          mapConfigs={MAP_CONFIGS}
+          mapConfigId={mapConfig.id}
+          onMapConfigIdChange={id =>
+            setMapConfig(MAP_CONFIGS.find(s => s.id === id)!)
+          }
         />
       )}
 
       <div className="logo-with-text">
         <img onClick={handleClickBottomLogo} src={logoWithText} alt="" />
-      </div>      
-
-      {/* TODO FIX LOADING LOGIC */}
+      </div>  
+      
       {fetchingMarkers && <div className="loader-container">
           <div className="loader">
           <img src={logo} alt="" />
@@ -457,10 +519,20 @@ const App = () => {
           <p>Getting pins...</p>
         </div>}
 
+      {fetchingStats && <div className="loader-container">
+        <div className="loader">
+        <img src={logo} alt="" />
+        </div>
+        <p>Loading stats...</p>
+      </div>}
+
            
         <Map
           onTilesLoaded={handleTilesLoaded}          
-          mapId={'edce5dcfb5575af1'}
+          // mapId={'edce5dcfb5575af1'}
+          mapId={mapConfig.mapId || null}
+          mapTypeId={mapConfig.mapTypeId}
+          styles={mapConfig.styles}
           defaultCenter={{ lat: 50, lng: 20 }}
           defaultZoom={1}
           minZoom={1}
@@ -503,8 +575,9 @@ const App = () => {
               setCopiedToClipboard(false);
             }            
           }}
-        >
-          {!codeMode && geojson && !fetchingMarkers && (
+        >          
+
+          {!codeMode && geojson && (
             <ClusteredMarkers
               geojson={geojson}
               setNumClusters={setNumClusters}
@@ -607,8 +680,15 @@ const App = () => {
               <SlidingUserTab userInfowindowData={geojson} username={showUsername.toLowerCase()} pinCount={showUsersNumberOfPins} toggleMenuApp={toggleMenu} isMobile={isMobile}/>
           )}
 
-        </Map>
-      
+        </Map>        
+        
+
+        {false && (
+          <Leaderboards
+            
+          />
+        )}
+        
         
     </APIProvider>
   );

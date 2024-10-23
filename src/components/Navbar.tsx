@@ -3,6 +3,7 @@ import FilterComponent from './FilterComponent';
 import { PlacePicker } from '@googlemaps/extended-component-library/react';
 import { PlacePicker as TPlacePicker } from '@googlemaps/extended-component-library/place_picker.js';
 import LogoPng from '../assets/worldmappin_claim_logo.png';
+import ControlPanel from './mapStyles';
 import './navbar.css';
 
 import { isMenuOpen } from '../app'
@@ -35,16 +36,33 @@ const Navbar = ({
     setMyLocationZoom,
     numOfPins,
     toggleMenuApp,
-    isMobile
+    isMobile,
+    mapConfigs,
+    mapConfigId,
+    onMapConfigIdChange
 }) => {
   // Declare pickerRef using useRef
   const pickerRef = useRef<TPlacePicker | null>(null);
 
   const [isMenuOpen2, setMenuOpen] = useState(false);
+  const [showMapControls, setShowMapControls] = useState(false);
 
   const toggleMenu = () => {
     setMenuOpen(!isMenuOpen2);
     toggleMenuApp();
+    setShowMapControls(false);
+  };
+
+  const toggleShowMapControls = () => {
+    setShowMapControls(!showMapControls);
+    const content = document.getElementById('settings-content');
+    content.classList.toggle('show');
+  };
+
+  const toggleShowMapControlsOnMobile = () => {
+    setShowMapControls(!showMapControls);
+    const content = document.getElementById('mobile-settings-content');
+    content.classList.toggle('show');
   };
 
   if(!isMenuOpen && isMenuOpen2) {
@@ -99,16 +117,29 @@ const Navbar = ({
                 />
 
                 <div className="button-container">
-                    <p onClick={onToggleCodeMode} style={{ cursor: "pointer" }}>
-                        {codeMode ? "Browse Map" : "Get Code"}
-                    </p>
-                    <p id="get-location-button" onClick={onGetLocation}>
-                    My Location
-                    </p>
-                    {!codeMode && <p onClick={() => { setShowfiltersettings(true)}}>Filter Map</p>}
+                    <p onClick={onToggleCodeMode} style={{ cursor: "pointer" }}>{codeMode ? "Browse Map" : "Get Code"}</p>
+                    <p id="get-location-button" onClick={onGetLocation}>My Location</p>
+                    {(!codeMode) && <p onClick={() => { setShowfiltersettings(true)}}>Filter Map</p>}
+
+                    <div className="settings-container">
+                      {!codeMode && <p className="settingsbutton" tabIndex={0} onClick={() => { toggleShowMapControls()}}>Settings</p>}                      
+                    </div>                
                 </div>
             </div>
         </div>
+        
+        <div className="button-container">
+        
+          <div className="settings-content" id="settings-content">                        
+            {showMapControls && <ControlPanel
+              mapConfigs={mapConfigs}
+              mapConfigId={mapConfigId}
+              onMapConfigIdChange={onMapConfigIdChange}
+            />}
+          </div>
+         
+        </div>  
+
                   
         
 
@@ -183,6 +214,37 @@ const Navbar = ({
                 My Location
               </p>
               {!codeMode && <p onClick={() => { setShowfiltersettings(true); }}>filter the map</p>}
+            </div>
+
+            <div className="mobile-settings">
+              <div className="mobile-settings-container">
+                        {!codeMode && <p className="mobile-settingsbutton" tabIndex={0} onClick={() => { toggleShowMapControlsOnMobile()}}>
+                          <svg
+                            width="32.000000pt" height="32.000000pt" viewBox="0 0 64.000000 64.000000"
+                            preserveAspectRatio="xMidYMid meet">
+
+                            <g transform="translate(0.000000,64.000000) scale(0.100000,-0.100000)"
+                            fill="#000000" stroke="none">
+                            <path d="M276 526 c-8 -43 -35 -54 -71 -30 -26 17 -27 16 -52 -9 -25 -25 -26
+                            -26 -9 -52 24 -36 13 -63 -30 -71 -32 -6 -34 -9 -34 -45 0 -36 2 -39 34 -45
+                            41 -7 49 -27 28 -68 -13 -27 -12 -30 12 -55 25 -24 27 -25 53 -10 40 22 60 14
+                            68 -27 6 -34 7 -35 48 -32 36 3 42 6 45 28 6 42 30 53 64 28 l30 -21 30 31 31
+                            30 -21 30 c-25 34 -14 58 28 64 22 3 25 8 25 48 0 40 -3 45 -25 48 -41 5 -53
+                            30 -30 62 l19 27 -30 29 c-29 28 -31 28 -59 12 -34 -19 -57 -8 -62 32 -3 22
+                            -9 25 -44 28 -40 3 -42 2 -48 -32z m70 -116 c30 0 64 -47 64 -87 0 -50 -22
+                            -80 -66 -92 -65 -18 -119 23 -119 89 0 54 53 108 93 94 8 -2 20 -4 28 -4z"/>
+                            </g>
+                          </svg>
+                        </p>}                   
+              </div>
+            </div>
+
+              <div className="mobile-settings-content" id="mobile-settings-content">                        
+              {showMapControls && <ControlPanel
+                mapConfigs={mapConfigs}
+                mapConfigId={mapConfigId}
+                onMapConfigIdChange={onMapConfigIdChange}
+              />}
             </div>
           </div>
 

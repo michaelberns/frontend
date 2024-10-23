@@ -20,7 +20,8 @@
     justify-content: center;
     align-items: center; /* Added to align items in the center vertically */
     width: 100%; /* Full width like the old search-box */
-    /*pointer-events: none;  Added to prevent interaction with the container */    
+    /*pointer-events: none;  Added to prevent interaction with the container */
+    z-index: 1100;   
   }
   
   .LocationPicker {
@@ -47,7 +48,7 @@
   .search-bar-wrapper2 {
     display: flex;
     position: relative;
-    margin-right: 40%;
+    margin-right: 40%;    
   }
   
   .button-container {  
@@ -142,6 +143,35 @@
       transform: translateY(-2px);
       /* Slight lift effect */
     }
+  }
+
+  .settings-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .settings-content {
+    position: absolute;
+    z-index: 1000;
+    max-width: 0;
+    top: 61px;
+    right: 0;
+    margin: 4px;
+    padding: 20px;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.65);
+    overflow: hidden;
+    white-space: nowrap;
+    transition: max-width 0.5s ease-in-out, opacity 0.3s ease-in-out;
+    opacity: 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
+  }
+  
+  .settings-content.show {    
+    max-width: 250px; /* Adjust based on your content's width */
+    opacity: 1;    
   }
   
   
@@ -271,6 +301,78 @@
     }
   
   
+  }
+
+  .mobile-settings {
+    /* background-color: aqua; */
+    overflow: hidden;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;  /* Aligns children elements to the right */   
+    position: relative;
+    top: -18px;
+  }
+
+  .mobile-settings-container {
+    position: relative;
+    display: flex;
+    align-items: center;    
+
+    p {  
+      margin-right: 6px;
+      border: calc(0.08 * var(--m)) solid rgba(255, 255, 255, 0.4);
+      /* Soft border */
+      position: relative;
+      color: #0c1410;
+      font-family: 'Open Sans', sans-serif;
+      font-size: var(--m);
+      font-weight: bold;
+      border-radius: 50%;
+      /* padding: calc(0.5 * var(--m)) calc(1 * var(--m)); */
+      display: flex;
+      justify-content: center;
+      cursor: pointer;
+
+
+      background-origin: border-box;
+      background-clip: padding-box, border-box, border-box;
+      background-size: 200%;
+      z-index: 10;
+
+
+      
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.15) 15%);
+      /* Light transparent background for glassy look */
+      backdrop-filter: blur(10px);
+
+      box-shadow: inset 0px 0px 0px rgba(0, 0, 0, 0.2), 2px 2px 5px rgba(255, 255, 255, 0.3),
+        /* Inner shadow for depth */
+        0 4px 8px rgba(0, 0, 0, 0.4);
+      /* External shadow for elevation */
+    }
+
+  }
+  
+  .mobile-settings-content {
+    position: absolute;
+    z-index: 1000;
+    top: 127px;
+    right: 0;
+    margin: 4px;
+    padding: 9px;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.65);
+    overflow: hidden;
+    white-space: nowrap;
+    transition: max-width 0.5s ease-in-out, opacity 0.3s ease-in-out;
+    opacity: 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
+  }
+  
+  .mobile-settings-content.show {    
+    max-width: 250px; /* Adjust based on your content's width */
+    opacity: 1;    
   }
   
   

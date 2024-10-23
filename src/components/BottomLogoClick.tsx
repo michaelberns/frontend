@@ -145,7 +145,6 @@ const BottomLogoClick = ({ onClose, onfetch, fetchdone}) => {
         })
       );
       userProfiles = profiles;
-      console.log(profiles)
     }
   };
 
@@ -171,8 +170,6 @@ const BottomLogoClick = ({ onClose, onfetch, fetchdone}) => {
         onlyLoadonce = false;    
       }     
     }
-
-    console.log(userProfiles)
   }, []);
 
   function fetchthelast7days() {  
@@ -217,69 +214,70 @@ const BottomLogoClick = ({ onClose, onfetch, fetchdone}) => {
   // console.log(continentCounts)
   // console.log(results);
 
-  if(continentCounts.length !== 0 && node)
-  return (
-    <div className="overlay">
-      <div className="modal" style={{ position: 'relative' }}>
-        <p className="close-button-stats" onClick={onClose}>X</p>
-        <div className="team-stats-container">
-          <div className="left-section-team">            
-              <h2>WorldMapPin Stats</h2>
-                <div className='overflowleft'>
-                  <div className="total-pins-display">
-                    <span>Total Pin Num.: </span>
-                    <span> {totalNumberOfPins}</span>
+  if(continentCounts.length !== 0 && node && userProfiles){
+    return (
+      <div className="overlay">
+        <div className="modal" style={{ position: 'relative' }}>
+          <p className="close-button-stats" onClick={onClose}>X</p>
+          <div className="team-stats-container">
+            <div className="left-section-team">            
+                <h2>WorldMapPin Stats</h2>
+                  <div className='overflowleft'>
+                    <div className="total-pins-display">
+                      <span>Total Pin Num.: </span>
+                      <span> {totalNumberOfPins}</span>
+                    </div>
+                  <div className='stats-list'>
+                    <div style={{  display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                      <span style={{ fontWeight: 'normal', color: '#666' }}>Continent</span>
+                      <span style={{ fontWeight: 'normal', color: '#666' }}>Pins</span>
+                    </div>
+                    {/* Divider */}
+                    <hr style={{ borderTop: '1px solid #ccc' }} />
+                    <ul>            
+                      {continentCounts.map(({ continent, count }) => (
+                        <li key={continent} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+                          <span style={{ marginRight: '10px' }}>{continent}</span>
+                          <span>{count}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                <div className='stats-list'>
-                  <div style={{  display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                    <span style={{ fontWeight: 'normal', color: '#666' }}>Continent</span>
-                    <span style={{ fontWeight: 'normal', color: '#666' }}>Pins</span>
-                  </div>
-                  {/* Divider */}
-                  <hr style={{ borderTop: '1px solid #ccc' }} />
-                  <ul>            
-                    {continentCounts.map(({ continent, count }) => (
-                      <li key={continent} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
-                        <span style={{ marginRight: '10px' }}>{continent}</span>
-                        <span>{count}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <div style={{ marginTop: '30px', marginRight: '20px', marginBottom: '20px'}} >
+                    <LineGraph results={results} />
+                  </div>  
                 </div>
-                <div style={{ marginTop: '30px', marginRight: '20px', marginBottom: '20px'}} >
-                  <LineGraph results={results} />
-                </div>  
+            </div>
+            <div className="middle"></div>
+            <div className="right-section">
+              <h2>Team</h2>
+              <div className="team-members">
+                {userProfiles.map((profile, index) => (
+                  <a
+                    key={index}
+                    href={`https://peakd.com/@${profile.username}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="username-link"
+                  >
+                    <div className="team-member">
+                      <img
+                        src={profile.profileImage}
+                        alt={`${profile.username}'s profile`}
+                        className="profile-pic"
+                      />
+                      <span>{profile.username}</span>
+                      <div className="profile_description">{profile.description}</div>
+                    </div>
+                  </a>
+                ))}
               </div>
-          </div>
-          <div className="middle"></div>
-          <div className="right-section">
-            <h2>Team</h2>
-            <div className="team-members">
-              {userProfiles.map((profile, index) => (
-                <a
-                  key={index}
-                  href={`https://peakd.com/@${profile.username}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="username-link"
-                >
-                  <div className="team-member">
-                    <img
-                      src={profile.profileImage}
-                      alt={`${profile.username}'s profile`}
-                      className="profile-pic"
-                    />
-                    <span>{profile.username}</span>
-                    <div className="profile_description">{profile.description}</div>
-                  </div>
-                </a>
-              ))}
             </div>
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 };
 
 export default BottomLogoClick;
