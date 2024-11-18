@@ -25,7 +25,7 @@
 /* Close button */
 .close-btn {
   position: absolute;
-  top: 20px;
+  top: 10px;
   right: 25px;
   font-size: 36px;
   text-decoration: none;
@@ -147,7 +147,7 @@ h4 {
   margin-bottom: 130px;  /* More space for the last post only */
 }
 
-@media screen and (max-width: 800px) {  
+@media screen and (max-width: 1100px) {  
   
   .side-tab.open {
     margin-top: 0;
@@ -164,6 +164,11 @@ h4 {
       text-decoration: none;
       color: rgb(0, 0, 0);
     
+  }
+
+  .close-btn {    
+    top: -8px;
+    right: 5px;
   }
 
   .side-tab .content {

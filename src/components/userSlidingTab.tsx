@@ -3,6 +3,7 @@ import './SlidingUserTab.css';
 import { InfoWindowContent } from './info-window-content';
 import initializeClient from './initializeClient';
 import { Client } from "@hiveio/dhive";
+import axios from 'axios';
 
 import mappinLogo from '../assets/noProfilefound.png';
 
@@ -15,10 +16,12 @@ if (node !== undefined) { client = new Client(node);}
 
 const max = 1; // Maximum number of accounts to return
 
-var onlyCallApiTwice = 2; // Not sure why only calling it once doesn't work
+var onlyCallApiTwice = 2;
 var usernamedifferent = "";
 
-function SlidingUserTab({ userInfowindowData, username, pinCount, toggleMenuApp, isMobile }) {
+var sortedTDsAndHonerable_afterFirstLoad = [];
+
+function SlidingUserTab({ userInfowindowData, username, pinCount, toggleMenuApp, isMobile, handleCloseButtonLeaderboard }) {
 
   async function initializeNode(){
     node = await initializeClient();  // Assume this function correctly initializes the client
@@ -37,12 +40,9 @@ function SlidingUserTab({ userInfowindowData, username, pinCount, toggleMenuApp,
     website: '',
   });
   const [isMinimized, setIsMinimized] = useState(false); // State to toggle minimized view
-  const userSideTabRef = useRef(null); // Reference to the sliding tab
-  const [isResizing, setIsResizing] = useState(false); // State to track resizing
-  const [startY, setStartY] = useState(0); // Initial Y position of the mouse
-  const [startHeight, setStartHeight] = useState(0); // Initial height of the tab
-  const animationFrameRef = useRef(null); // Ref to track the animation frame
-  //const contentRef = useRef<HTMLDivElement | null>(null); // Properly initialize the ref for the content area below
+  const userSideTabRef = useRef(null); // Reference to the sliding tab  
+  const [sortedTDsAndHonerable, setSortedTDsAndHonerable] = useState<[number , string, number ][]>([]);
+  const [rank, setRank] = useState(0);
 
   // Function to handle the username input and query the blockchain
   const handleUsernameSubmit = async (username) => {
@@ -73,7 +73,31 @@ function SlidingUserTab({ userInfowindowData, username, pinCount, toggleMenuApp,
       console.error('Error fetching accounts:', error);
       userNotFound();      
     }
-  };  
+  };
+
+  async function loadRankingData() {
+    if(sortedTDsAndHonerable_afterFirstLoad.length === 0){
+        try {
+            const response = await axios.get('https://worldmappin.com/api/ranking');
+            console.log(response.data)
+            const formattedData = response.data.map(item => [item.rank, item.author, item.tds]);
+            setSortedTDsAndHonerable(formattedData);
+            sortedTDsAndHonerable_afterFirstLoad = formattedData;
+        } catch (err) {
+            console.error('Error fetching ranking data:', err);
+        }
+    } else {
+        setSortedTDsAndHonerable(sortedTDsAndHonerable_afterFirstLoad);
+    }
+    
+    const index = sortedTDsAndHonerable.findIndex(entry => entry[1].toLowerCase() === username);
+    if(index === -1){
+      setRank(0);
+    } else {
+      setRank(sortedTDsAndHonerable[index][0]);
+    }
+    
+  }
 
   useEffect(() => {
     if(usernamedifferent !== username) {
@@ -87,7 +111,9 @@ function SlidingUserTab({ userInfowindowData, username, pinCount, toggleMenuApp,
       usernamedifferent = username;
       setIsMinimized(true); 
     }
-  })  
+
+    loadRankingData();
+  })
 
   const userNotFound = () => {
 
@@ -115,13 +141,13 @@ function SlidingUserTab({ userInfowindowData, username, pinCount, toggleMenuApp,
   const openTab = () => {
     setIsOpen(true);
     setIsMinimized(false);
+    handleCloseButtonLeaderboard();
   };
 
   const closeTab = () => {
     setIsOpen(false);
     setIsMinimized(true);
   };
-  
 
   return (
     <div>
@@ -138,6 +164,7 @@ function SlidingUserTab({ userInfowindowData, username, pinCount, toggleMenuApp,
             <div className='profile-column'>
               <img src={profilePic} alt={`${username}'s profile`} className="profile-picture" />
               <a href={`https://peakd.com/@${username}`} target="_blank" rel="noopener noreferrer" className="username-link">@{username}</a>
+              {rank !== 0 && (<p className="rank">Rank: {rank || 0}</p>)}
             </div>
           </div>
             {!isMinimized && (
@@ -147,11 +174,11 @@ function SlidingUserTab({ userInfowindowData, username, pinCount, toggleMenuApp,
                   <p className="about">{profileDetails.about}</p>
                   <p className="location">{profileDetails.location}</p>
                   {profileDetails.website && (
-                    <p><a href={profileDetails.website} target="_blank" rel="noopener noreferrer" className="website">
+                    <p className="user-website"><a href={profileDetails.website} target="_blank" rel="noopener noreferrer" className="website">
                       {profileDetails.website}
                     </a></p>
                   )}
-                  <p className="pin-count">{pinCount || 0} Pins</p>
+                  <p className="pin-count">{pinCount || 0} Pins</p>                  
                 </div>
               </div>
             )}
@@ -162,7 +189,7 @@ function SlidingUserTab({ userInfowindowData, username, pinCount, toggleMenuApp,
           {/* Content inside the sliding tab */}
           {isOpen ? (
             <div>
-              <InfoWindowContent features={userInfowindowData.features} />
+              <InfoWindowContent features={userInfowindowData.features} showRank={false}/>
             </div>
           ) : (
             <p>No data available</p>

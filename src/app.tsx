@@ -155,7 +155,7 @@ const App = () => {
   const [mapConfig, setMapConfig] = useState<MapConfig>(MAP_CONFIGS[0]);
 
   useEffect(() => {
-    if (window.innerWidth < 800) {
+    if (window.innerWidth < 1100) {
       setIsMobile(true);
     } else {
       setIsMobile(false);
@@ -456,6 +456,25 @@ const App = () => {
     }
   };
 
+  const toggleMenu_close = () => {
+    isMenuOpen = false;
+    // Toggle class name based on the state of isMenuOpen
+    const container = document.querySelector('.circle-container, .circle-container-hide');
+    if (container) {
+      container.classList.replace('circle-container-hide', 'circle-container');
+    }
+  };
+
+  const [leaderboardOpen, setLeaderboardOpen] = useState(false);
+
+  const handleCloseButtonLeaderboard = () => {
+    setLeaderboardOpen(false);
+  };
+
+  const toggleLeaderboard = () => {
+    setLeaderboardOpen(!leaderboardOpen);
+  };
+
   return (
     <APIProvider apiKey={API_KEY} version={'beta'}>
       <BrowserRouter>
@@ -505,6 +524,8 @@ const App = () => {
           onMapConfigIdChange={id =>
             setMapConfig(MAP_CONFIGS.find(s => s.id === id)!)
           }
+          toggleLeaderboard={toggleLeaderboard}
+          handleCloseButtonLeaderboard={handleCloseButtonLeaderboard}
         />
       )}
 
@@ -540,6 +561,7 @@ const App = () => {
           zoomControl={true}
           gestureHandling={'greedy'}
           disableDefaultUI={true}
+          isFractionalZoomEnabled={false} // Todo check if this fixed zoom lvl 2
         
           // mapTypeControl={true}
           // mapTypeControlOptions={{
@@ -677,15 +699,19 @@ const App = () => {
           )} */}
 
           {(showUsernameProfile) && (
-              <SlidingUserTab userInfowindowData={geojson} username={showUsername.toLowerCase()} pinCount={showUsersNumberOfPins} toggleMenuApp={toggleMenu} isMobile={isMobile}/>
+              <SlidingUserTab userInfowindowData={geojson} username={showUsername.toLowerCase()} pinCount={showUsersNumberOfPins} toggleMenuApp={toggleMenu_close} isMobile={isMobile} handleCloseButtonLeaderboard={handleCloseButtonLeaderboard}/>
           )}
 
         </Map>        
         
 
-        {false && (
+        {leaderboardOpen && (
           <Leaderboards
-            
+            handleCloseButtonLeaderboard={handleCloseButtonLeaderboard}
+            setGeojson={setGeojson}
+            newSearchParams={newSearchParams}
+            setLocation={setLocation}
+            setMyLocationZoom={setMyLocationZoom}
           />
         )}
         

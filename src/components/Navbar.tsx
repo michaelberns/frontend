@@ -39,7 +39,9 @@ const Navbar = ({
     isMobile,
     mapConfigs,
     mapConfigId,
-    onMapConfigIdChange
+    onMapConfigIdChange,
+    toggleLeaderboard,
+    handleCloseButtonLeaderboard,
 }) => {
   // Declare pickerRef using useRef
   const pickerRef = useRef<TPlacePicker | null>(null);
@@ -53,10 +55,14 @@ const Navbar = ({
     setShowMapControls(false);
   };
 
+  const toggleShowfiltersettings = () => {
+    setShowfiltersettings(current => !current)
+  };
+
   const toggleShowMapControls = () => {
     setShowMapControls(!showMapControls);
-    const content = document.getElementById('settings-content');
-    content.classList.toggle('show');
+    // const content = document.getElementById('settings-content');
+    // content.classList.toggle('show');
   };
 
   const toggleShowMapControlsOnMobile = () => {
@@ -69,27 +75,26 @@ const Navbar = ({
     toggleMenu();
     toggleMenuApp();
   }
+  
+  const PlacePicker1 = ({ inputStyle, ...props }) => {
+    return (
+        <div>
+            <input style={inputStyle} {...props} />            
+        </div>
+    );
+};
 
   return (
     
     <div className="CS-container">
-      {!isMenuOpen2 && (
-      <div className="navbar-container">
-      <div className="nav-links">
-
-        
-
-        <div className="LocationPickerContainer">
-            <div className="search-bar-wrapper">
-                <a href="/">
-                  <div className="logo-png" >
-                      <img src={LogoPng} alt="" width={150} style={{ height: 'auto' }} />
-                  </div>
-                </a>
-            </div>
-
-            <div className="search-bar-wrapper2">
-                <PlacePicker
+      {!isMobile && (
+        <div>
+        <div className="navbar-container">
+          
+        <ul className="navbar-ul">
+          <li className='top-logo'><a href="/"><img src={LogoPng} alt="" width={175} style={{ height: 'auto' }} /></a></li>
+          <li className="placePicker">
+            <PlacePicker
                     className="LocationPicker"
                     ref={pickerRef}
                     forMap="gmap"
@@ -115,46 +120,52 @@ const Navbar = ({
                   }}
                   //onKeyDown={handleKeyPress}
                 />
+          </li>
+          
+          <div id="settingsbutton" className="button-container">
+            {!codeMode && 
+              <li><a><p className="settingsbutton" tabIndex={0} onClick={() => { toggleShowMapControls()}}>Settings</p></a>
+                  <div className={`nav-settings-container ${showMapControls ? 'active' : ''}`}>
+                  {showMapControls && <ControlPanel
+                    mapConfigs={mapConfigs}
+                    mapConfigId={mapConfigId}
+                    onMapConfigIdChange={onMapConfigIdChange}
+                  />}
+                  </div>
+              </li>
+            }
+          </div>
+          <div className="button-container">
+            <li><a><p id="open-leaderboard-button" onClick={toggleLeaderboard}>Leaderboard</p></a></li>            
+            {(!codeMode) && <li><a><p onClick={() => { toggleShowfiltersettings()}}>Filter Map</p></a></li>}
+            <li><a><p id="get-location-button" onClick={onGetLocation}>My Location</p></a></li>
+            <li><a><p onClick={onToggleCodeMode} style={{ cursor: "pointer" }}>{codeMode ? "Browse Map" : "Get Code"}</p></a></li>            
+          </div>
+        </ul>
 
-                <div className="button-container">
-                    <p onClick={onToggleCodeMode} style={{ cursor: "pointer" }}>{codeMode ? "Browse Map" : "Get Code"}</p>
-                    <p id="get-location-button" onClick={onGetLocation}>My Location</p>
-                    {(!codeMode) && <p onClick={() => { setShowfiltersettings(true)}}>Filter Map</p>}
-
-                    <div className="settings-container">
-                      {!codeMode && <p className="settingsbutton" tabIndex={0} onClick={() => { toggleShowMapControls()}}>Settings</p>}                      
-                    </div>                
-                </div>
-            </div>
-        </div>
-        
-        <div className="button-container">
-        
+        {/* <div className="button-container">          
           <div className="settings-content" id="settings-content">                        
             {showMapControls && <ControlPanel
               mapConfigs={mapConfigs}
               mapConfigId={mapConfigId}
               onMapConfigIdChange={onMapConfigIdChange}
             />}
-          </div>
-         
-        </div>  
+          </div>          
+        </div> */}
 
-                  
-        
-
-        {/* Filter container UI logic */}
-
+        {/* Filter Container */}
         <div className="filter-container">
-          {showFilterSettings && <FilterComponent onFilter={handleFilter} searchParams={searchParams} />}
-          {showFilterSettings && <div className='filter-close'>
-            <div className="close-btn"><p onClick={() => setShowfiltersettings(false)}>X</p>
-            </div>
-          </div>}
+            {showFilterSettings && <FilterComponent onFilter={handleFilter} searchParams={searchParams} />}
+
+            {showFilterSettings && 
+                <div className='filter-close'>
+                    <div className="close-btn"><p onClick={() => setShowfiltersettings(false)}>X</p></div>
+                </div>
+            }
+        </div>
 
         </div>
-      </div>
-      </div>
+        </div>
       )}
 
       {/*Mobile Menu*/}
@@ -213,7 +224,17 @@ const Navbar = ({
               <p id="get-location-button" onClick={onGetLocation}>
                 My Location
               </p>
-              {!codeMode && <p onClick={() => { setShowfiltersettings(true); }}>filter the map</p>}
+              {!codeMode && <p onClick={() => { toggleShowfiltersettings(); handleCloseButtonLeaderboard();}}>filter the map</p>}
+            </div>
+
+            <div className="leaderboard-mobile-settings">
+              <div className="mobile-leaderboard-container">
+                {!codeMode && 
+                  <p className="mobile-leaderboard-button" tabIndex={0} onClick={toggleLeaderboard}>
+                    <span className="icon">🏆</span>
+                  </p>
+                }                
+              </div>
             </div>
 
             <div className="mobile-settings">

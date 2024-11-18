@@ -24,7 +24,7 @@
   max-width: 65%; /* Ensures it doesn't exceed the viewport width */
   max-height: 70%; /* Limit modal height to avoid overflow */
   overflow-y: auto; /* Enable scrolling if content overflows */
-}
+  }
 
 .modal .close-button-stats {
   position: absolute;
@@ -262,6 +262,7 @@ li {
   .modal {    
     min-width: 95%; /* 800px Increased minimum width to make the modal bigger */    
     max-height: 70%; /* Limit modal height to avoid overflow */
+    top: 50px;
   }
   
   .team-stats-container {

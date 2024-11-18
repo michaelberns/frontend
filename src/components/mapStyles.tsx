@@ -15,7 +15,7 @@ function ControlPanel({
 }: ControlPanelProps) {
   return (
      
-    <div className="control-panel2">    
+    <div className="control-panel2">
       <div className="map-config">
           <label htmlFor="map-config-select" className="map-config-label">Map Configuration</label>
           <select

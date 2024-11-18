@@ -30,6 +30,7 @@ const usernameArray = [
 var onlyLoadonce = true;
 
 
+var userProfiles_afterfirstload = []; 
 var userProfiles = []; 
 var results = [];
 
@@ -89,7 +90,7 @@ const BottomLogoClick = ({ onClose, onfetch, fetchdone}) => {
     node = await initializeClient();  // Assume this function correctly initializes the client
     if (node !== undefined) {
       client = new Client(node);  // Initialize client after node is ready
-      fetchProfiles()
+      fetchProfiles();
     }
   }
 
@@ -100,6 +101,8 @@ const BottomLogoClick = ({ onClose, onfetch, fetchdone}) => {
   const [searchParams, setSearchParams] = useState(
     params?.username ? { author: params.username } : (params?.permlink ? { permlink: params.permlink } : (params?.tag ? { tags: [params?.tag] } : { curated_only: false }))
   );  
+
+  const [userProfiles, setUserProfiles] = useState([]);
 
   async function loadpinsdata() {
     try {
@@ -120,8 +123,7 @@ const BottomLogoClick = ({ onClose, onfetch, fetchdone}) => {
   }  
 
   // Fetch profile details for each username
-  const fetchProfiles = async () => {
-    if(node){ 
+  const fetchProfiles = async () => {    
       const profiles = await Promise.all(
         usernameArray.map(async (user) => {
           let username = user.username
@@ -134,7 +136,7 @@ const BottomLogoClick = ({ onClose, onfetch, fetchdone}) => {
                 const metadata = accountDetails[0].posting_json_metadata;
                 const parsedMetadata = JSON.parse(metadata);
                 const userProfile = parsedMetadata.profile;
-                const profileImage = userProfile?.profile_image || 'path/to/default-profile-picture.png';
+                const profileImage = userProfile?.profile_image || '../assets/noProfilefound.png';
                 return { username, description, profileImage};
               }
             }
@@ -144,8 +146,8 @@ const BottomLogoClick = ({ onClose, onfetch, fetchdone}) => {
           return { username, description, profileImage: 'path/to/default-profile-picture.png' }; // Default profile image on error
         })
       );
-      userProfiles = profiles;
-    }
+      setUserProfiles(profiles);
+      userProfiles_afterfirstload = profiles;    
   };
 
   const fetchData = async (filterParams) => {
@@ -170,6 +172,11 @@ const BottomLogoClick = ({ onClose, onfetch, fetchdone}) => {
         onlyLoadonce = false;    
       }     
     }
+
+    if(userProfiles_afterfirstload.length !== 0){
+      setUserProfiles(userProfiles_afterfirstload);
+    }
+    
   }, []);
 
   function fetchthelast7days() {  
@@ -214,7 +221,7 @@ const BottomLogoClick = ({ onClose, onfetch, fetchdone}) => {
   // console.log(continentCounts)
   // console.log(results);
 
-  if(continentCounts.length !== 0 && node && userProfiles){
+  if(continentCounts.length !== 0 && node && userProfiles.length !== 0){
     return (
       <div className="overlay">
         <div className="modal" style={{ position: 'relative' }}>
@@ -262,7 +269,7 @@ const BottomLogoClick = ({ onClose, onfetch, fetchdone}) => {
                   >
                     <div className="team-member">
                       <img
-                        src={profile.profileImage}
+                        src={`https://images.hive.blog/u/${profile.username}/avatar`}
                         alt={`${profile.username}'s profile`}
                         className="profile-pic"
                       />
