@@ -60,6 +60,7 @@ mapTypeId?: string;
 styles?: google.maps.MapTypeStyle[];
 };
 
+// Styles
 const MAP_CONFIGS: MapConfig[] = [
   {
     id: 'light',
